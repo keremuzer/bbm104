@@ -21,6 +21,6 @@ public class Product {
     }
 
     public String toString() {
-        return name + " " + price + " " + protein + " " + carb + " " + fat;
+        return "" + name;
     }
 }

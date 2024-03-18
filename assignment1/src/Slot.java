@@ -1,9 +1,14 @@
 public class Slot {
-    private Product[] products;
+    private final Product[] products;
     private int numProducts;
 
     public Slot() {
         products = new Product[10];
+        for (int i = 0; i < 10; i++) {
+            products[i] = new Product("", 0, 0, 0, 0);
+
+        }
+        numProducts = 0;
     }
 
     public void addProduct(Product product) {
@@ -18,4 +23,5 @@ public class Slot {
     public Product[] getProducts() {
         return products;
     }
+
 }
