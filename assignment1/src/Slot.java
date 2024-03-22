@@ -1,3 +1,6 @@
+/**
+ * Slot class represents a slot in the vending machine. Each slot can hold up to 10 products.
+ */
 public class Slot {
     private final Product[] products;
     private int numProducts;
@@ -11,11 +14,19 @@ public class Slot {
         numProducts = 0;
     }
 
+    /**
+     * Adds the given product to the slot.
+     *
+     * @param product Product that is going to be added to the slot.
+     */
     public void addProduct(Product product) {
         products[numProducts] = product;
         numProducts++;
     }
 
+    /**
+     * Removes the last product from the slot.
+     */
     public void removeProduct() {
         products[numProducts - 1] = new Product("", 0, 0, 0, 0);
         numProducts--;

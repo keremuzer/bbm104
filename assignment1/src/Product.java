@@ -1,4 +1,7 @@
-
+/**
+ * Product class represents a product in the GMM.
+ * It has a name, price, protein, carb, fat, and calorie.
+ */
 public class Product {
     private final String name;
     private final int price;

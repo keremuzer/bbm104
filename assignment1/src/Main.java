@@ -2,6 +2,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Main {
+    /**
+     * This is the main method.
+     *
+     * @param args args[0] is the path of the input file that contains the products, args[1] is the path of the input file that contains the purchases, args[2] is the path of the output file.
+     */
     public static void main(String[] args) {
         GymMealMachine machine = new GymMealMachine();
         fill(machine, args[0], args[2]);
@@ -10,6 +15,12 @@ public class Main {
         machine.printGMM(args[2]);
     }
 
+    /**
+     * Reads the input file and creates an ArrayList of products.
+     *
+     * @param path Path of the input file.
+     * @return ArrayList of products.
+     */
     private static ArrayList<Product> readInput(String path) {
         String[] lines = FileIO.readFile(path, true, true);
         ArrayList<Product> products = new ArrayList<>();
@@ -28,6 +39,14 @@ public class Main {
         return products;
     }
 
+    /**
+     * Fills the machine with the products.
+     *
+     * @param machine    GymMealMachine object.
+     * @param inputPath  Path of the input file.
+     * @param outputPath Path of the output file.
+     * @return 0 if the machine is not full, -1 if the machine is full.
+     */
     private static int fill(GymMealMachine machine, String inputPath, String outputPath) {
         ArrayList<Product> products = readInput(inputPath);
         for (Product product : products) {
@@ -43,6 +62,13 @@ public class Main {
         return 0;
     }
 
+    /**
+     * Reads the purchases from the input file and makes the purchases.
+     *
+     * @param machine    GymMealMachine object.
+     * @param inputPath  Path of the input file.
+     * @param outputPath Path of the output file.
+     */
     private static void purchase(GymMealMachine machine, String inputPath, String outputPath) {
         String[] lines = FileIO.readFile(inputPath, true, true);
 
@@ -58,6 +84,16 @@ public class Main {
         }
     }
 
+    /**
+     * Makes the purchase according to the choice.
+     *
+     * @param machine GymMealMachine object.
+     * @param choice  Choice of the purchase.
+     * @param value   Value of the purchase.
+     * @param money   Money given for the purchase.
+     * @param path    Path of the output file.
+     * @return 0 if the purchase is successful, -1 if the purchase is unsuccessful.
+     */
     private static int makePurchase(GymMealMachine machine, String choice, int value, int money, String path) {
         switch (choice) {
             case "NUMBER":
@@ -133,6 +169,16 @@ public class Main {
         return -1;
     }
 
+    /**
+     * Prints the information about the purchase.
+     *
+     * @param machine GymMealMachine object.
+     * @param money   Money given for the purchase.
+     * @param path    Path of the output file.
+     * @param j       Row index of the slot.
+     * @param k       Column index of the slot.
+     * @return 0 if the purchase is successful, -1 if the purchase is unsuccessful.
+     */
     private static int printInfo(GymMealMachine machine, int money, String path, int j, int k) {
         if (machine.getSlots()[j][k].getProducts()[0].getPrice() > money) {
             FileIO.writeToFile(path, "INFO: Insufficient money, try again with more money.", true, true);
