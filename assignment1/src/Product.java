@@ -1,26 +1,42 @@
 
 public class Product {
     private final String name;
-    private final double price;
+    private final int price;
     private final double protein;
     private final double carb;
     private final double fat;
-    private double calorie;
+    private int calorie;
 
-    public Product(String name, double price, double protein, double carb, double fat) {
+    public Product(String name, int price, double protein, double carb, double fat) {
         this.name = name;
         this.price = price;
         this.protein = protein;
         this.carb = carb;
         this.fat = fat;
-        this.calorie = 4 * protein + 4 * carb + 9 * fat;
+        this.calorie = (int) Math.round(4 * protein + 4 * carb + 9 * fat);
     }
 
     public String getName() {
         return name;
     }
 
-    public String toString() {
-        return "" + name;
+    public int getCalorie() {
+        return calorie;
+    }
+
+    public double getProtein() {
+        return protein;
+    }
+
+    public double getCarb() {
+        return carb;
+    }
+
+    public double getFat() {
+        return fat;
+    }
+
+    public int getPrice() {
+        return price;
     }
 }

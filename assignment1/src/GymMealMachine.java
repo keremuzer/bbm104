@@ -32,6 +32,36 @@ public class GymMealMachine {
         return false;
     }
 
+    public void removeFromMachine(Slot slot) {
+        slot.removeProduct();
+    }
+
+    public void printGMM(String path) {
+        FileIO.writeToFile(path, "-----Gym Meal Machine-----", true, true);
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (slots[i][j].getNumProducts() == 0) {
+                    FileIO.writeToFile(path, "___(0, 0)___", true, false);
+                    continue;
+                }
+                FileIO.writeToFile(path, slots[i][j].getProducts()[0].getName() + "(" + slots[i][j].getProducts()[0].getCalorie() + ", " + slots[i][j].getNumProducts() + ")___", true, false);
+            }
+            FileIO.writeToFile(path, "", true, true);
+        }
+        FileIO.writeToFile(path, "----------", true, true);
+    }
+
+    public boolean isFull() {
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (slots[i][j].getNumProducts() < 10) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public Slot[][] getSlots() {
         return slots;
     }

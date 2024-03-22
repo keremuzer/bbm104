@@ -16,6 +16,11 @@ public class Slot {
         numProducts++;
     }
 
+    public void removeProduct() {
+        products[numProducts - 1] = new Product("", 0, 0, 0, 0);
+        numProducts--;
+    }
+
     public int getNumProducts() {
         return numProducts;
     }
