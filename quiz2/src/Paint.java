@@ -1,3 +1,6 @@
+/**
+ * Paint class that extends Decoration
+ */
 public class Paint extends Decoration{
     public Paint(String name, int price) {
         super(name, "Paint", price);

@@ -1,3 +1,7 @@
+/**
+ * CircularClassroom class that extends Classroom class
+ * and implements calculateWallArea and calculateFloorArea methods.
+ */
 public class CircularClassroom extends Classroom{
     public CircularClassroom(String name, int width, int length, int height) {
         super(name, "Circle", width, length, height);

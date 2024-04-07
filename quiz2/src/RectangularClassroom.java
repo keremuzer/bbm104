@@ -1,3 +1,7 @@
+/**
+ * RectangularClassroom class that extends Classroom class
+ * and implements calculateWallArea and calculateFloorArea methods
+ */
 public class RectangularClassroom extends Classroom{
     public RectangularClassroom(String name, int width, int length, int height) {
         super(name, "Rectangle", width, length, height);

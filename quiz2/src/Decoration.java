@@ -1,3 +1,9 @@
+/**
+ * This is the abstract class for the decoration of a classroom.
+ * Contains the name, type and price of the decoration.
+ * Contains the abstract methods calculateCost and getTiles.
+ * Contains a Builder class to build a decoration object.
+ */
 public abstract class Decoration {
     private final String name;
     private final String type;
@@ -25,6 +31,9 @@ public abstract class Decoration {
 
     public abstract int getTiles(double area);
 
+    /**
+     * Builder class to build a decoration object.
+     */
     public static class Builder{
         private String name;
         private String type;
@@ -52,6 +61,10 @@ public abstract class Decoration {
             return this;
         }
 
+        /**
+         * Builds a decoration object based on the type.
+         * @return a decoration object
+         */
         public Decoration build() {
             if (type.equalsIgnoreCase("paint")) {
                 return new Paint(name, price);

@@ -1,6 +1,10 @@
 import java.util.ArrayList;
 
 public class Main {
+    /**
+     * Main method of the program.
+     * @param args Command line arguments.
+     */
     public static void main(String[] args) {
         if (args.length != 3) {
             System.out.println("Usage: java Main <items> <decorate> <output>");
@@ -9,6 +13,11 @@ public class Main {
         decorate(readClassrooms(args[0]), readDecorations(args[0]), args[1], args[2]);
     }
 
+    /**
+     * Reads the classrooms from the given file and returns them as an ArrayList.
+     * @param path Path of the file.
+     * @return ArrayList of classrooms.
+     */
     private static ArrayList<Classroom> readClassrooms(String path) {
         String[] lines = FileIO.readFile(path, true, true);
         ArrayList<Classroom> classes = new ArrayList<>();
@@ -28,6 +37,11 @@ public class Main {
         return classes;
     }
 
+    /**
+     * Reads the decorations from the given file and returns them as an ArrayList.
+     * @param path Path of the file.
+     * @return ArrayList of decorations.
+     */
     private static ArrayList<Decoration> readDecorations(String path) {
         String[] lines = FileIO.readFile(path, true, true);
         ArrayList<Decoration> decorations = new ArrayList<>();
@@ -55,6 +69,13 @@ public class Main {
         return decorations;
     }
 
+    /**
+     * Decorates the classrooms with the given decorations and writes the results to the output file.
+     * @param classes ArrayList of classrooms.
+     * @param decorations ArrayList of decorations.
+     * @param inputPath Path of the input file.
+     * @param outputPath Path of the output file.
+     */
     public static void decorate(ArrayList<Classroom> classes, ArrayList<Decoration> decorations, String inputPath, String outputPath) {
         String[] lines = FileIO.readFile(inputPath, true, true);
         int totalCost = 0;

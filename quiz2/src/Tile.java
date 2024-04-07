@@ -1,3 +1,6 @@
+/**
+ * Tile class that extends Decoration
+ */
 public class Tile extends Decoration{
     private final int area;
     public Tile(String name, int price, int area) {

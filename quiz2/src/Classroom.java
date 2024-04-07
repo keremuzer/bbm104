@@ -1,3 +1,10 @@
+/**
+ * Abstract class for a classroom.
+ * Contains the name, shape, width, length, and height of the classroom.
+ * Contains an abstract method to calculate the wall area of the classroom.
+ * Contains an abstract method to calculate the floor area of the classroom.
+ * Contains a Builder class to build a classroom object.
+ */
 public abstract class Classroom {
     private final String name;
     private final String shape;
@@ -33,6 +40,9 @@ public abstract class Classroom {
         return height;
     }
 
+    /**
+     * Builder class to build a classroom object.
+     */
     public static class Builder {
         private String name;
         private String shape;
@@ -65,6 +75,10 @@ public abstract class Classroom {
             return this;
         }
 
+        /**
+         * Builds a classroom object based on the given parameters.
+         * @return Classroom object.
+         */
         public Classroom build() {
             if (shape.equalsIgnoreCase("rectangle")) {
                 return new RectangularClassroom(name, width, length, height);
