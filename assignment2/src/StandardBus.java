@@ -4,12 +4,7 @@ class StandardBus extends Voyage {
     private double refundCut;
 
     public StandardBus(int voyageID, String from, String to, int rows, double seatPrice, double refundCut) {
-        this.voyageID = voyageID;
-        this.from = from;
-        this.to = to;
-        this.rows = rows;
-        this.seatPrice = seatPrice;
-        this.refundCut = refundCut;
+        super(voyageID, from, to, rows, seatPrice);
         this.seats = new boolean[rows * 4];
     }
 
@@ -62,7 +57,7 @@ class StandardBus extends Voyage {
 
     @Override
     public void printVoyage() {
-        System.out.println("Voyage " + voyageID + "\n" + from + "-" + to);
+        System.out.println("Voyage " + getVoyageID() + "\n" + getFrom() + "-" + to);
         for (int i = 0; i < seats.length; i++){
             if (i % 4 == 0){
                 if (seats[i]){

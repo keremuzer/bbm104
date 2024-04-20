@@ -61,7 +61,7 @@ class PremiumBus extends StandardBus {
     }
 
     public void printVoyage(){
-        System.out.println("Voyage " + voyageID + "\n" + from + "-" + to);
+        System.out.println("Voyage " + getVoyageID() + "\n" + getFrom() + "-" + to);
         for (int i = 0; i < seats.length; i++){
             if (i % 3 == 0){
                 if (seats[i]){

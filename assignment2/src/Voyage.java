@@ -1,14 +1,25 @@
 import java.util.ArrayList;
 
 public abstract class Voyage {
-    int voyageID;
-    String from;
+    private final int voyageID;
+    private final String from;
     String to;
     int rows;
     double seatPrice;
     double revenue;
     boolean[] seats;
     static ArrayList<Voyage> voyages = new ArrayList<>();
+
+    public Voyage(int voyageID, String from, String to, int rows, double seatPrice) {
+        this.voyageID = voyageID;
+        this.from = from;
+        this.to = to;
+        this.rows = rows;
+        this.seatPrice = seatPrice;
+        this.revenue = 0;
+        this.seats = new boolean[rows * 4];
+        voyages.add(this);
+    }
 
     public abstract void sellTicket(ArrayList<Integer> seatNumbers);
     public abstract void refundTicket(int voyageID, ArrayList<Integer> seatNumbers);

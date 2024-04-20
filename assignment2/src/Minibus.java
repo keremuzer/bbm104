@@ -2,13 +2,8 @@ import java.util.ArrayList;
 
 class Minibus extends Voyage {
     public Minibus(int voyageID, String from, String to, int rows, double seatPrice) {
-        this.voyageID = voyageID;
-        this.from = from;
-        this.to = to;
-        this.rows = rows;
-        this.seatPrice = seatPrice;
+        super(voyageID, from, to, rows, seatPrice);
         this.seats = new boolean[rows * 2];
-        this.revenue = 0;
     }
 
     @Override
@@ -41,7 +36,7 @@ class Minibus extends Voyage {
 
     @Override
     public void printVoyage() {
-        System.out.println("Voyage " + voyageID + "\n" + from + "-" + to);
+        System.out.println("Voyage " + getVoyageID() + "\n" + getFrom() + "-" + to);
         for (int i = 0; i < seats.length; i++){
             if (i % 2 == 0){
                 if (seats[i]){
