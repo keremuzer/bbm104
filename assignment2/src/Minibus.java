@@ -41,7 +41,23 @@ class Minibus extends Voyage {
 
     @Override
     public void printVoyage() {
-        // Implementation
+        System.out.println("Voyage " + voyageID + "\n" + from + "-" + to);
+        for (int i = 0; i < seats.length; i++){
+            if (i % 2 == 0){
+                if (seats[i]){
+                    System.out.print("X ");
+                } else {
+                    System.out.print("* ");
+                }
+            } else {
+                if (seats[i]){
+                    System.out.print("X\n");
+                } else {
+                    System.out.print("*\n");
+                }
+
+            }
+        }
     }
 
     @Override

@@ -75,6 +75,7 @@ public abstract class Voyage {
                 case "minibus":
                     return new Minibus(voyageID, from, to, rows, seatPrice);
                 default:
+                    System.out.println("ERROR: Erroneous usage of \"INIT_VOYAGE\" command!");
                     throw new IllegalArgumentException("ERROR: Erroneous usage of \"INIT_VOYAGE\" command!");
             }
         }

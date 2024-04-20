@@ -12,6 +12,7 @@ public class Main {
 
     private static void executeCommands(){
         String[] commands = readCommands("src/i2.txt");
+        commandLoop:
         for (String command : commands) {
             String[] parts = command.split("\t");
             if (parts[0].equals("Z_REPORT")) {
@@ -50,6 +51,8 @@ public class Main {
                             .setPremiumFee(Double.parseDouble(parts[8]))
                             .build();
                     Voyage.voyages.add(voyage);
+                } else {
+                    System.out.println("ERROR: Erroneous usage of \"INIT_VOYAGE\" command!");
                 }
             } else if (parts[0].equals("SELL_TICKET")) {
                 int voyageID = Integer.parseInt(parts[1]);
@@ -71,10 +74,27 @@ public class Main {
                 for (Voyage voyage : Voyage.voyages) {
                     if (voyage.voyageID == voyageID) {
                         voyage.refundTicket(voyageID, seatNumbers);
-                    } else {
-                        System.out.println("ERROR: There is no voyage with ID of "+ voyageID + "!");
+                        continue commandLoop;
                     }
                 }
+                System.out.println("ERROR: There is no voyage with ID of "+ voyageID + "!");
+            } else if (parts[0].equals("PRINT_VOYAGE")) {
+                try {
+                    int voyageID = Integer.parseInt(parts[1]);
+                    if (voyageID < 0) {
+                        throw new NumberFormatException();
+                    }
+                    for (Voyage voyage : Voyage.voyages) {
+                        if (voyage.voyageID == voyageID) {
+                            voyage.printVoyage();
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("ERROR: -30 is not a positive integer, ID of a voyage must be a positive integer!");
+                    return;
+                }
+            } else {
+                System.out.println("ERROR: There is no command namely " + parts[0] + "!");
             }
         }
     }
