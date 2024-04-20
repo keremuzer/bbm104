@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
@@ -10,7 +11,7 @@ public class Main {
     }
 
     private static void executeCommands(){
-        String[] commands = readCommands("src/i1.txt");
+        String[] commands = readCommands("src/i2.txt");
         for (String command : commands) {
             String[] parts = command.split("\t");
             if (parts[0].equals("Z_REPORT")) {
@@ -25,6 +26,7 @@ public class Main {
                             .setRows(Integer.parseInt(parts[5]))
                             .setSeatPrice(Double.parseDouble(parts[6]))
                             .build();
+                    Voyage.voyages.add(voyage);
                 } else if (parts[1].equals("Standard")) {
                     Voyage voyage = new Voyage.Builder()
                             .setType(parts[1])
@@ -35,6 +37,7 @@ public class Main {
                             .setSeatPrice(Double.parseDouble(parts[6]))
                             .setRefundCut(Double.parseDouble(parts[7]))
                             .build();
+                    Voyage.voyages.add(voyage);
                 } else if (parts[1].equals("Premium")) {
                     Voyage voyage = new Voyage.Builder()
                             .setType(parts[1])
@@ -46,6 +49,15 @@ public class Main {
                             .setRefundCut(Double.parseDouble(parts[7]))
                             .setPremiumFee(Double.parseDouble(parts[8]))
                             .build();
+                    Voyage.voyages.add(voyage);
+                }
+            } else if (parts[0].equals("SELL_TICKET")) {
+                int voyageID = Integer.parseInt(parts[1]);
+                int[] seatNumbers = Arrays.stream(parts[2].split("_")).mapToInt(Integer::parseInt).toArray();
+                for (Voyage voyage : Voyage.voyages) {
+                    if (voyage.voyageID == voyageID) {
+                        voyage.sellTicket(seatNumbers);
+                    }
                 }
             }
         }

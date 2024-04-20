@@ -6,10 +6,11 @@ public abstract class Voyage {
     String to;
     int rows;
     double seatPrice;
-    private double revenue;
+    double revenue;
     boolean[] seats;
+    static ArrayList<Voyage> voyages = new ArrayList<>();
 
-    public abstract void sellTicket(ArrayList<Integer> seatNumbers);
+    public abstract void sellTicket(int[] seatNumbers);
     public abstract void refundTicket(ArrayList<Integer> seatNumbers);
     public abstract void printVoyage();
     public abstract double calculateRefund(int seatNumber);
