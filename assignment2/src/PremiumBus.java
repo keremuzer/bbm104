@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 class PremiumBus extends StandardBus {
     private double premiumFee;
 
@@ -8,7 +10,7 @@ class PremiumBus extends StandardBus {
     }
 
     @Override
-    public void sellTicket(int[] seatNumbers) {
+    public void sellTicket(ArrayList<Integer> seatNumbers) {
         for (int seatNumber : seatNumbers) {
             if (seatNumber < 0) {
                 System.out.println("ERROR: " + seatNumber + " is not a positive integer, seat number must be a positive integer!");
@@ -35,8 +37,36 @@ class PremiumBus extends StandardBus {
     }
 
     @Override
+    public void refundTicket(int voyageID, ArrayList<Integer> seatNumbers) {
+        for (int seatNumber : seatNumbers) {
+            if (seatNumber < 0) {
+                System.out.println("ERROR: " + seatNumber + " is not a positive integer, seat number must be a positive integer!");
+                return;
+            }
+            if (seatNumber > seats.length) {
+                System.out.println("ERROR: There is no such a seat!");
+                return;
+            }
+            if (!seats[seatNumber]) {
+                System.out.println("ERROR: One or more seats are not sold!");
+                return;
+            }
+        }
+
+        for (int seatNumber : seatNumbers) {
+            seats[seatNumber] = false;
+            double refund = calculateRefund(seatNumber);
+            revenue -= refund;
+        }
+    }
+
+    @Override
     public double calculateRefund(int seatNumber) {
         // Additional logic for premium seats
-        return super.calculateRefund(seatNumber) - premiumFee;
+        if (seatNumber % 3 == 1){
+            return super.calculateRefund(seatNumber) - premiumFee;
+        } else {
+            return super.calculateRefund(seatNumber);
+        }
     }
 }

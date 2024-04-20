@@ -53,10 +53,26 @@ public class Main {
                 }
             } else if (parts[0].equals("SELL_TICKET")) {
                 int voyageID = Integer.parseInt(parts[1]);
-                int[] seatNumbers = Arrays.stream(parts[2].split("_")).mapToInt(Integer::parseInt).toArray();
+                ArrayList<Integer> seatNumbers = new ArrayList<>();
+                for (String seatNumber : parts[2].split("_")) {
+                    seatNumbers.add(Integer.parseInt(seatNumber));
+                }
                 for (Voyage voyage : Voyage.voyages) {
                     if (voyage.voyageID == voyageID) {
                         voyage.sellTicket(seatNumbers);
+                    }
+                }
+            } else if (parts[0].equals("REFUND_TICKET")) {
+                int voyageID = Integer.parseInt(parts[1]);
+                ArrayList<Integer> seatNumbers = new ArrayList<>();
+                for (String seatNumber : parts[2].split("_")) {
+                    seatNumbers.add(Integer.parseInt(seatNumber));
+                }
+                for (Voyage voyage : Voyage.voyages) {
+                    if (voyage.voyageID == voyageID) {
+                        voyage.refundTicket(voyageID, seatNumbers);
+                    } else {
+                        System.out.println("ERROR: There is no voyage with ID of "+ voyageID + "!");
                     }
                 }
             }

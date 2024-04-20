@@ -12,7 +12,7 @@ class Minibus extends Voyage {
     }
 
     @Override
-    public void sellTicket(int[] seatNumbers){
+    public void sellTicket(ArrayList<Integer> seatNumbers){
         for (int seatNumber : seatNumbers) {
             if (seatNumber < 0) {
                 System.out.println("ERROR: " + seatNumber + " is not a positive integer, seat number must be a positive integer!");
@@ -35,8 +35,8 @@ class Minibus extends Voyage {
     }
 
     @Override
-    public void refundTicket(ArrayList<Integer> seatNumbers) {
-        // No refunds allowed, do nothing
+    public void refundTicket(int voyageID, ArrayList<Integer> seatNumbers) {
+        // Refund is not available for minibuses, do nothing
     }
 
     @Override

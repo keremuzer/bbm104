@@ -14,7 +14,7 @@ class StandardBus extends Voyage {
     }
 
     @Override
-    public void sellTicket(int[] seatNumbers) {
+    public void sellTicket(ArrayList<Integer> seatNumbers) {
         for (int seatNumber : seatNumbers) {
             if (seatNumber < 0) {
                 System.out.println("ERROR: " + seatNumber + " is not a positive integer, seat number must be a positive integer!");
@@ -37,8 +37,27 @@ class StandardBus extends Voyage {
     }
 
     @Override
-    public void refundTicket(ArrayList<Integer> seatNumbers) {
-        // Implementation
+    public void refundTicket(int voyageID, ArrayList<Integer> seatNumbers) {
+        for (int seatNumber : seatNumbers) {
+            if (seatNumber < 0) {
+                System.out.println("ERROR: " + seatNumber + " is not a positive integer, seat number must be a positive integer!");
+                return;
+            }
+            if (seatNumber > seats.length) {
+                System.out.println("ERROR: There is no such a seat!");
+                return;
+            }
+            if (!seats[seatNumber]) {
+                System.out.println("ERROR: One or more seats are not sold!");
+                return;
+            }
+        }
+
+        for (int seatNumber : seatNumbers) {
+            seats[seatNumber] = false;
+            double refund = calculateRefund(seatNumber);
+            revenue -= refund;
+        }
     }
 
     @Override
@@ -49,6 +68,6 @@ class StandardBus extends Voyage {
     @Override
     public double calculateRefund(int seatNumber) {
         // Calculation based on refundCut
-        return 0;
+        return seatPrice * refundCut / 100;
     }
 }

@@ -10,8 +10,8 @@ public abstract class Voyage {
     boolean[] seats;
     static ArrayList<Voyage> voyages = new ArrayList<>();
 
-    public abstract void sellTicket(int[] seatNumbers);
-    public abstract void refundTicket(ArrayList<Integer> seatNumbers);
+    public abstract void sellTicket(ArrayList<Integer> seatNumbers);
+    public abstract void refundTicket(int voyageID, ArrayList<Integer> seatNumbers);
     public abstract void printVoyage();
     public abstract double calculateRefund(int seatNumber);
 
@@ -103,5 +103,14 @@ public abstract class Voyage {
 
     public double getRevenue() {
         return 0;
+    }
+
+    public Voyage getVoyage(int voyageID) {
+        for (Voyage voyage : voyages) {
+            if (voyage.voyageID == voyageID) {
+                return voyage;
+            }
+        }
+        return null;
     }
 }
