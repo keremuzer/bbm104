@@ -12,7 +12,7 @@ class PremiumBus extends StandardBus {
     @Override
     public void sellTicket(ArrayList<Integer> seatNumbers) {
         for (int seatNumber : seatNumbers) {
-            if (seatNumber < 0) {
+            if (seatNumber <= 0) {
                 System.out.println("ERROR: " + seatNumber + " is not a positive integer, seat number must be a positive integer!");
                 return;
             }
@@ -20,18 +20,18 @@ class PremiumBus extends StandardBus {
                 System.out.println("ERROR: There is no such a seat!");
                 return;
             }
-            if (seats[seatNumber]) {
+            if (seats[seatNumber - 1]) {
                 System.out.println("ERROR: One or more seats already sold!");
                 return;
             }
         }
 
         for (int seatNumber : seatNumbers) {
-            seats[seatNumber] = true;
-            if (seatNumber % 3 == 1){
-                revenue += seatPrice + premiumFee;
+            seats[seatNumber - 1] = true;
+            if (seatNumber % 3 == 1) {
+                setRevenue(getRevenue() + getSeatPrice() + premiumFee);
             } else {
-                revenue += seatPrice;
+                setRevenue(getRevenue() + getSeatPrice());
             }
         }
     }
@@ -47,51 +47,41 @@ class PremiumBus extends StandardBus {
                 System.out.println("ERROR: There is no such a seat!");
                 return;
             }
-            if (!seats[seatNumber]) {
+            if (!seats[seatNumber - 1]) {
                 System.out.println("ERROR: One or more seats are not sold!");
                 return;
             }
         }
 
         for (int seatNumber : seatNumbers) {
-            seats[seatNumber] = false;
+            seats[seatNumber - 1] = false;
             double refund = calculateRefund(seatNumber);
-            revenue -= refund;
+            setRevenue(getRevenue() - refund);
         }
     }
 
-    public void printVoyage(){
-        System.out.println("Voyage " + getVoyageID() + "\n" + getFrom() + "-" + to);
-        for (int i = 0; i < seats.length; i++){
-            if (i % 3 == 0){
-                if (seats[i]){
+    public void printVoyage() {
+        System.out.println("Voyage " + getVoyageID() + "\n" + getFrom() + "-" + getTo());
+        for (int i = 0; i < seats.length; i++) {
+            if (i % 3 == 0) {
+                if (seats[i]) {
                     System.out.print("X | ");
                 } else {
                     System.out.print("* | ");
                 }
             } else if (i % 3 == 1) {
-                if (seats[i]){
+                if (seats[i]) {
                     System.out.print("X ");
                 } else {
                     System.out.print("* ");
                 }
             } else {
-                if (seats[i]){
+                if (seats[i]) {
                     System.out.print("X\n");
                 } else {
                     System.out.print("*\n");
                 }
             }
-        }
-    }
-
-    @Override
-    public double calculateRefund(int seatNumber) {
-        // Additional logic for premium seats
-        if (seatNumber % 3 == 1){
-            return super.calculateRefund(seatNumber) - premiumFee;
-        } else {
-            return super.calculateRefund(seatNumber);
         }
     }
 }

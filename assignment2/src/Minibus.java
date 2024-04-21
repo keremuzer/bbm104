@@ -7,9 +7,9 @@ class Minibus extends Voyage {
     }
 
     @Override
-    public void sellTicket(ArrayList<Integer> seatNumbers){
+    public void sellTicket(ArrayList<Integer> seatNumbers) {
         for (int seatNumber : seatNumbers) {
-            if (seatNumber < 0) {
+            if (seatNumber <= 0) {
                 System.out.println("ERROR: " + seatNumber + " is not a positive integer, seat number must be a positive integer!");
                 return;
             }
@@ -17,15 +17,15 @@ class Minibus extends Voyage {
                 System.out.println("ERROR: There is no such a seat!");
                 return;
             }
-            if (seats[seatNumber]) {
+            if (seats[seatNumber - 1]) {
                 System.out.println("ERROR: One or more seats already sold!");
                 return;
             }
         }
 
         for (int seatNumber : seatNumbers) {
-            seats[seatNumber] = true;
-            revenue += seatPrice;
+            seats[seatNumber - 1] = true;
+            setRevenue(getRevenue() + getSeatPrice());
         }
     }
 
@@ -36,21 +36,20 @@ class Minibus extends Voyage {
 
     @Override
     public void printVoyage() {
-        System.out.println("Voyage " + getVoyageID() + "\n" + getFrom() + "-" + to);
-        for (int i = 0; i < seats.length; i++){
-            if (i % 2 == 0){
-                if (seats[i]){
+        System.out.println("Voyage " + getVoyageID() + "\n" + getFrom() + "-" + getTo());
+        for (int i = 0; i < seats.length; i++) {
+            if (i % 2 == 0) {
+                if (seats[i]) {
                     System.out.print("X ");
                 } else {
                     System.out.print("* ");
                 }
             } else {
-                if (seats[i]){
+                if (seats[i]) {
                     System.out.print("X\n");
                 } else {
                     System.out.print("*\n");
                 }
-
             }
         }
     }

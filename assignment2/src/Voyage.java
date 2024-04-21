@@ -1,14 +1,14 @@
 import java.util.ArrayList;
 
 public abstract class Voyage {
+    static ArrayList<Voyage> voyages = new ArrayList<>();
     private final int voyageID;
     private final String from;
-    String to;
-    int rows;
-    double seatPrice;
-    double revenue;
+    private final String to;
+    private final int rows;
+    private final double seatPrice;
     boolean[] seats;
-    static ArrayList<Voyage> voyages = new ArrayList<>();
+    private double revenue;
 
     public Voyage(int voyageID, String from, String to, int rows, double seatPrice) {
         this.voyageID = voyageID;
@@ -22,9 +22,50 @@ public abstract class Voyage {
     }
 
     public abstract void sellTicket(ArrayList<Integer> seatNumbers);
+
     public abstract void refundTicket(int voyageID, ArrayList<Integer> seatNumbers);
+
     public abstract void printVoyage();
+
     public abstract double calculateRefund(int seatNumber);
+
+    public double setRevenue(double revenue) {
+        return this.revenue = revenue;
+    }
+
+    // Getters for common properties
+    public int getVoyageID() {
+        return voyageID;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public String getTo() {
+        return to;
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public double getSeatPrice() {
+        return seatPrice;
+    }
+
+    public double getRevenue() {
+        return revenue;
+    }
+
+    public Voyage getVoyage(int voyageID) {
+        for (Voyage voyage : voyages) {
+            if (voyage.voyageID == voyageID) {
+                return voyage;
+            }
+        }
+        return null;
+    }
 
     // Builder static nested class
     public static class Builder {
@@ -90,39 +131,5 @@ public abstract class Voyage {
                     throw new IllegalArgumentException("ERROR: Erroneous usage of \"INIT_VOYAGE\" command!");
             }
         }
-    }
-
-    // Getters for common properties
-    public int getVoyageID() {
-        return voyageID;
-    }
-
-    public String getFrom() {
-        return from;
-    }
-
-    public String getTo() {
-        return to;
-    }
-
-    public int getRows() {
-        return rows;
-    }
-
-    public double getSeatPrice() {
-        return seatPrice;
-    }
-
-    public double getRevenue() {
-        return 0;
-    }
-
-    public Voyage getVoyage(int voyageID) {
-        for (Voyage voyage : voyages) {
-            if (voyage.voyageID == voyageID) {
-                return voyage;
-            }
-        }
-        return null;
     }
 }
