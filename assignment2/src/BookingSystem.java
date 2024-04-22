@@ -2,18 +2,35 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Locale;
 
-public class Main {
+public class BookingSystem {
+    /**
+     * Main method of the program.
+     *
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
-        executeCommands("src/output.txt");
+        executeCommands(args[0], args[1]);
+        trimOutput(args[1]);
     }
 
+    /**
+     * Reads the commands from the input file and returns them as an array.
+     *
+     * @param path path of the input file
+     * @return array of commands
+     */
     private static String[] readCommands(String path) {
         return FileIO.readFile(path, true, true);
     }
 
-    private static void executeCommands(String outputPath) {
+    /**
+     * Executes the commands in the given file and writes the output to the given file.
+     *
+     * @param outputPath path of the output file
+     */
+    private static void executeCommands(String inputPath, String outputPath) {
         FileIO.writeToFile(outputPath, "", false, false);
-        String[] commands = readCommands("src/i2.txt");
+        String[] commands = readCommands(inputPath);
         commandLoop:
         for (String command : commands) {
             FileIO.writeToFile(outputPath, "COMMAND: " + command, true, true);
@@ -125,17 +142,18 @@ public class Main {
                             throw new IllegalArgumentException("ERROR: There is no voyage with ID of " + voyageID + "!");
                         }
                         Voyage currentVoyage = null;
+                        double price = 0;
                         ArrayList<Integer> seatNumbers = new ArrayList<>();
                         for (String seatNumber : parts[2].split("_")) {
                             seatNumbers.add(Integer.parseInt(seatNumber));
                         }
                         for (Voyage voyage : Voyage.voyages) {
                             if (voyage.getVoyageID() == voyageID) {
-                                voyage.sellTicket(seatNumbers, outputPath);
+                                price = voyage.sellTicket(seatNumbers, outputPath);
                                 currentVoyage = voyage;
                             }
                         }
-                        FileIO.writeToFile(outputPath, "Seat " + parts[2].replace("_", "-") + " of the Voyage " + voyageID + " from " + currentVoyage.getFrom() + " to " + currentVoyage.getTo() + " was successfully sold for " + String.format(Locale.US, "%.2f", seatNumbers.size() * currentVoyage.getSeatPrice()) + " TL.", true, true);
+                        FileIO.writeToFile(outputPath, "Seat " + parts[2].replace("_", "-") + " of the Voyage " + voyageID + " from " + currentVoyage.getFrom() + " to " + currentVoyage.getTo() + " was successfully sold for " + String.format(Locale.US, "%.2f", price) + " TL.", true, true);
                     } catch (IllegalArgumentException e) {
                         FileIO.writeToFile(outputPath, e.getMessage(), true, true);
                     } catch (Exception e) {
@@ -155,8 +173,8 @@ public class Main {
                                     FileIO.writeToFile(outputPath, "ERROR: Minibus tickets are not refundable!", true, true);
                                     continue commandLoop;
                                 }
-                                voyage.refundTicket(voyageID, seatNumbers, outputPath);
-                                FileIO.writeToFile(outputPath, "Seat " + parts[2].replace("_", "-") + " of the Voyage " + voyageID + " from " + voyage.getFrom() + " to " + voyage.getTo() + " was successfully refunded for " + String.format(Locale.US, "%.2f", seatNumbers.size() * voyage.calculateRefund(seatNumbers.get(0))) + " TL.", true, true);
+                                double refund = voyage.refundTicket(voyageID, seatNumbers, outputPath);
+                                FileIO.writeToFile(outputPath, "Seat " + parts[2].replace("_", "-") + " of the Voyage " + voyageID + " from " + voyage.getFrom() + " to " + voyage.getTo() + " was successfully refunded for " + String.format(Locale.US, "%.2f", refund) + " TL.", true, true);
                                 continue commandLoop;
                             }
                         }
@@ -172,16 +190,18 @@ public class Main {
                     try {
                         int voyageID = Integer.parseInt(parts[1]);
                         if (voyageID <= 0) {
-                            throw new NumberFormatException(voyageID + "");
+                            throw new NumberFormatException("ERROR: " + voyageID + " is not a positive integer, ID of a voyage must be a positive integer!");
                         }
                         for (Voyage voyage : Voyage.voyages) {
                             if (voyage.getVoyageID() == voyageID) {
                                 voyage.printVoyage(outputPath);
                                 FileIO.writeToFile(outputPath, "Revenue: " + String.format(Locale.US, "%.2f", voyage.getRevenue()), true, true);
+                                continue commandLoop;
                             }
                         }
+                        FileIO.writeToFile(outputPath, "ERROR: There is no voyage with ID of " + voyageID + "!", true, true);
                     } catch (NumberFormatException e) {
-                        FileIO.writeToFile(outputPath, "ERROR: " + e.getMessage() + " is not a positive integer, ID of a voyage must be a positive integer!", true, true);
+                        FileIO.writeToFile(outputPath, e.getMessage(), true, true);
                         break;
                     } catch (Exception e) {
                         FileIO.writeToFile(outputPath, "ERROR: Erroneous usage of \"PRINT_VOYAGE\" command!", true, true);
@@ -192,25 +212,25 @@ public class Main {
                         if (parts.length != 2) {
                             throw new Exception();
                         }
+                        if (Integer.parseInt(parts[1]) <= 0) {
+                            throw new IllegalArgumentException("ERROR: " + Integer.parseInt(parts[1]) + " is not a positive integer, ID of a voyage must be a positive integer!");
+                        }
                         int voyageID = Integer.parseInt(parts[1]);
                         for (Voyage voyage : Voyage.voyages) {
                             if (voyage.getVoyageID() == voyageID) {
                                 FileIO.writeToFile(outputPath, "Voyage " + voyageID + " was successfully cancelled!", true, true);
                                 FileIO.writeToFile(outputPath, "Voyage details can be found below:", true, true);
                                 voyage.printVoyage(outputPath);
-                                ArrayList<Integer> seatNumbers = new ArrayList<>();
-                                for (int i = 0; i < voyage.seats.length; i++) {
-                                    if (voyage.seats[i]) {
-                                        seatNumbers.add(i + 1);
-                                    }
-                                }
-                                voyage.refundTicket(voyageID, seatNumbers, outputPath);
+                                voyage.cancelVoyage();
                                 FileIO.writeToFile(outputPath, "Revenue: " + String.format(Locale.US, "%.2f", voyage.getRevenue()), true, true);
                                 Voyage.voyages.remove(voyage);
                                 continue commandLoop;
                             }
                         }
                         FileIO.writeToFile(outputPath, "ERROR: There is no voyage with ID of " + voyageID + "!", true, true);
+                        break;
+                    } catch (IllegalArgumentException e) {
+                        FileIO.writeToFile(outputPath, e.getMessage(), true, true);
                         break;
                     } catch (Exception e) {
                         FileIO.writeToFile(outputPath, "ERROR: Erroneous usage of \"CANCEL_VOYAGE\" command!", true, true);
@@ -238,5 +258,16 @@ public class Main {
                 FileIO.writeToFile(outputPath, "----------------", true, true);
             }
         }
+    }
+
+    /**
+     * Trims the output file.
+     *
+     * @param outputPath path of the output file
+     */
+    public static void trimOutput(String outputPath) {
+        String[] lines = FileIO.readFile(outputPath, true, true);
+        String output = String.join("\n", lines);
+        FileIO.writeToFile(outputPath, output.trim(), false, false);
     }
 }

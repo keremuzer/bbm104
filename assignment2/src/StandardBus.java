@@ -9,28 +9,18 @@ class StandardBus extends Voyage {
         this.refundCut = refundCut;
     }
 
+    /**
+     * Refunds the tickets with the given seat numbers and returns the refund amount.
+     * Checks if the seat number is positive, if the seat number is valid, and if the seat is already empty.
+     * If the seat is valid and not empty, refunds the ticket and decreases the revenue.
+     *
+     * @param voyageID    The ID of the voyage
+     * @param seatNumbers The seat numbers to be refunded
+     * @param outputPath  The path to the output file
+     * @return The total refund amount
+     */
     @Override
-    public void sellTicket(ArrayList<Integer> seatNumbers, String outputPath) {
-        for (int seatNumber : seatNumbers) {
-            if (seatNumber <= 0) {
-                throw new IllegalArgumentException("ERROR: " + seatNumber + " is not a positive integer, seat number must be a positive integer!");
-            }
-            if (seatNumber > seats.length) {
-                throw new IllegalArgumentException("ERROR: There is no such a seat!");
-            }
-            if (seats[seatNumber - 1]) {
-                throw new IllegalArgumentException("ERROR: One or more seats already sold!");
-            }
-        }
-
-        for (int seatNumber : seatNumbers) {
-            seats[seatNumber - 1] = true;
-            setRevenue(getRevenue() + getSeatPrice());
-        }
-    }
-
-    @Override
-    public void refundTicket(int voyageID, ArrayList<Integer> seatNumbers, String outputPath) {
+    public double refundTicket(int voyageID, ArrayList<Integer> seatNumbers, String outputPath) {
         for (int seatNumber : seatNumbers) {
             if (seatNumber < 0) {
                 throw new IllegalArgumentException("ERROR: " + seatNumber + " is not a positive integer, seat number must be a positive integer!");
@@ -39,16 +29,23 @@ class StandardBus extends Voyage {
                 throw new IllegalArgumentException("ERROR: There is no such a seat!");
             }
             if (!seats[seatNumber - 1]) {
-                throw new IllegalArgumentException("ERROR: One or more seats are not sold!");
+                throw new IllegalArgumentException("ERROR: One or more seats are already empty!");
             }
         }
-
+        double refund = 0;
         for (int seatNumber : seatNumbers) {
             seats[seatNumber - 1] = false;
             setRevenue(getRevenue() - calculateRefund(seatNumber));
+            refund += calculateRefund(seatNumber);
         }
+        return refund;
     }
 
+    /**
+     * Prints the voyage to the output file.
+     *
+     * @param outputPath The path to the output file
+     */
     @Override
     public void printVoyage(String outputPath) {
         FileIO.writeToFile(outputPath, "Voyage " + getVoyageID() + "\n" + getFrom() + "-" + getTo(), true, true);
@@ -75,9 +72,15 @@ class StandardBus extends Voyage {
         }
     }
 
+    /**
+     * Calculates the refund amount for the given seat number.
+     *
+     * @param seatNumber The seat number
+     * @return The refund amount
+     */
     @Override
     public double calculateRefund(int seatNumber) {
-        return getSeatPrice() * (100 - refundCut) / 100;
+        return getSeatPrice() * (1 - refundCut / 100);
     }
 
     public double getRefundCut() {

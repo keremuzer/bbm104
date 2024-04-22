@@ -1,5 +1,13 @@
 import java.util.ArrayList;
 
+/**
+ * Abstract class for voyages.
+ * Contains the voyageID, departure point, arrival point, number of rows, seat price, seats, and revenue of the voyage.
+ * Contains an abstract method to refund a ticket.
+ * Contains an abstract method to print the voyage.
+ * Contains an abstract method to calculate the refund amount of a seat.
+ * Contains a Builder class to build a voyage object.
+ */
 public abstract class Voyage {
     static ArrayList<Voyage> voyages = new ArrayList<>();
     private final int voyageID;
@@ -21,13 +29,55 @@ public abstract class Voyage {
         voyages.add(this);
     }
 
-    public abstract void sellTicket(ArrayList<Integer> seatNumbers, String outputPath);
 
-    public abstract void refundTicket(int voyageID, ArrayList<Integer> seatNumbers, String outputPath);
+    public abstract double refundTicket(int voyageID, ArrayList<Integer> seatNumbers, String outputPath);
 
     public abstract void printVoyage(String outputPath);
 
     public abstract double calculateRefund(int seatNumber);
+
+    /**
+     * Sells a ticket for the voyage.
+     * Checks if the seat number is positive, if the seat number is valid, and if the seat is already sold.
+     * If the seat is valid and not sold, sells the ticket and increases the revenue.
+     *
+     * @param seatNumbers The seat numbers to be sold
+     * @param outputPath  The path to the output file
+     * @return The total price of the sold tickets
+     */
+    public double sellTicket(ArrayList<Integer> seatNumbers, String outputPath) {
+        for (int seatNumber : seatNumbers) {
+            if (seatNumber <= 0) {
+                throw new IllegalArgumentException("ERROR: " + seatNumber + " is not a positive integer, seat number must be a positive integer!");
+            }
+            if (seatNumber > seats.length) {
+                throw new IllegalArgumentException("ERROR: There is no such a seat!");
+            }
+            if (seats[seatNumber - 1]) {
+                throw new IllegalArgumentException("ERROR: One or more seats already sold!");
+            }
+        }
+        double price = 0;
+        for (int seatNumber : seatNumbers) {
+            seats[seatNumber - 1] = true;
+            setRevenue(getRevenue() + getSeatPrice());
+            price += getSeatPrice();
+        }
+        return price;
+    }
+
+    /**
+     * Cancels the voyage.
+     * Sets all the seats to empty and decreases the revenue.
+     */
+    public void cancelVoyage() {
+        for (int i = 0; i < seats.length; i++) {
+            if (seats[i]) {
+                seats[i] = false;
+                setRevenue(getRevenue() - getSeatPrice());
+            }
+        }
+    }
 
     public double setRevenue(double revenue) {
         return this.revenue = revenue;
@@ -58,16 +108,9 @@ public abstract class Voyage {
         return revenue;
     }
 
-    public Voyage getVoyage(int voyageID) {
-        for (Voyage voyage : voyages) {
-            if (voyage.voyageID == voyageID) {
-                return voyage;
-            }
-        }
-        return null;
-    }
-
-    // Builder static nested class
+    /**
+     * Builder class to build a voyage object.
+     */
     public static class Builder {
         private String type;
         private int voyageID;
@@ -118,6 +161,11 @@ public abstract class Voyage {
             return this;
         }
 
+        /**
+         * Builds a voyage object according to the type.
+         *
+         * @return The built voyage object
+         */
         public Voyage build() {
             switch (type.toLowerCase()) {
                 case "standard":
