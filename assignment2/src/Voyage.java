@@ -21,11 +21,11 @@ public abstract class Voyage {
         voyages.add(this);
     }
 
-    public abstract void sellTicket(ArrayList<Integer> seatNumbers);
+    public abstract void sellTicket(ArrayList<Integer> seatNumbers, String outputPath);
 
-    public abstract void refundTicket(int voyageID, ArrayList<Integer> seatNumbers);
+    public abstract void refundTicket(int voyageID, ArrayList<Integer> seatNumbers, String outputPath);
 
-    public abstract void printVoyage();
+    public abstract void printVoyage(String outputPath);
 
     public abstract double calculateRefund(int seatNumber);
 
@@ -128,7 +128,7 @@ public abstract class Voyage {
                     return new Minibus(voyageID, from, to, rows, seatPrice);
                 default:
                     System.out.println("ERROR: Erroneous usage of \"INIT_VOYAGE\" command!");
-                    throw new IllegalArgumentException("ERROR: Erroneous usage of \"INIT_VOYAGE\" command!");
+                    return null;
             }
         }
     }

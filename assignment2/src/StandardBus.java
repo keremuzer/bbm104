@@ -10,19 +10,16 @@ class StandardBus extends Voyage {
     }
 
     @Override
-    public void sellTicket(ArrayList<Integer> seatNumbers) {
+    public void sellTicket(ArrayList<Integer> seatNumbers, String outputPath) {
         for (int seatNumber : seatNumbers) {
             if (seatNumber <= 0) {
-                System.out.println("ERROR: " + seatNumber + " is not a positive integer, seat number must be a positive integer!");
-                return;
+                throw new IllegalArgumentException("ERROR: " + seatNumber + " is not a positive integer, seat number must be a positive integer!");
             }
             if (seatNumber > seats.length) {
-                System.out.println("ERROR: There is no such a seat!");
-                return;
+                throw new IllegalArgumentException("ERROR: There is no such a seat!");
             }
             if (seats[seatNumber - 1]) {
-                System.out.println("ERROR: One or more seats already sold!");
-                return;
+                throw new IllegalArgumentException("ERROR: One or more seats already sold!");
             }
         }
 
@@ -33,19 +30,16 @@ class StandardBus extends Voyage {
     }
 
     @Override
-    public void refundTicket(int voyageID, ArrayList<Integer> seatNumbers) {
+    public void refundTicket(int voyageID, ArrayList<Integer> seatNumbers, String outputPath) {
         for (int seatNumber : seatNumbers) {
             if (seatNumber < 0) {
-                System.out.println("ERROR: " + seatNumber + " is not a positive integer, seat number must be a positive integer!");
-                return;
+                throw new IllegalArgumentException("ERROR: " + seatNumber + " is not a positive integer, seat number must be a positive integer!");
             }
             if (seatNumber > seats.length) {
-                System.out.println("ERROR: There is no such a seat!");
-                return;
+                throw new IllegalArgumentException("ERROR: There is no such a seat!");
             }
             if (!seats[seatNumber - 1]) {
-                System.out.println("ERROR: One or more seats are not sold!");
-                return;
+                throw new IllegalArgumentException("ERROR: One or more seats are not sold!");
             }
         }
 
@@ -56,32 +50,26 @@ class StandardBus extends Voyage {
     }
 
     @Override
-    public void printVoyage() {
-        System.out.println("Voyage " + getVoyageID() + "\n" + getFrom() + "-" + getTo());
+    public void printVoyage(String outputPath) {
+        FileIO.writeToFile(outputPath, "Voyage " + getVoyageID() + "\n" + getFrom() + "-" + getTo(), true, true);
         for (int i = 0; i < seats.length; i++) {
-            if (i % 4 == 0) {
+            if (i % 4 == 0 || i % 4 == 2) {
                 if (seats[i]) {
-                    System.out.print("X ");
+                    FileIO.writeToFile(outputPath, "X ", true, false);
                 } else {
-                    System.out.print("* ");
+                    FileIO.writeToFile(outputPath, "* ", true, false);
                 }
             } else if (i % 4 == 1) {
                 if (seats[i]) {
-                    System.out.print("X | ");
+                    FileIO.writeToFile(outputPath, "X | ", true, false);
                 } else {
-                    System.out.print("* | ");
-                }
-            } else if (i % 4 == 2) {
-                if (seats[i]) {
-                    System.out.print("X ");
-                } else {
-                    System.out.print("* ");
+                    FileIO.writeToFile(outputPath, "* | ", true, false);
                 }
             } else {
                 if (seats[i]) {
-                    System.out.print("X\n");
+                    FileIO.writeToFile(outputPath, "X", true, true);
                 } else {
-                    System.out.print("*\n");
+                    FileIO.writeToFile(outputPath, "*", true, true);
                 }
             }
         }
@@ -89,7 +77,10 @@ class StandardBus extends Voyage {
 
     @Override
     public double calculateRefund(int seatNumber) {
-        // Calculation based on refundCut
         return getSeatPrice() * (100 - refundCut) / 100;
+    }
+
+    public double getRefundCut() {
+        return refundCut;
     }
 }
