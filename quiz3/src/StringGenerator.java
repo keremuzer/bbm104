@@ -14,7 +14,7 @@ public class StringGenerator {
             return startSymbol;
         }
 
-        for(String expansion : productionRules.get(startSymbol)) {
+        for (String expansion : productionRules.get(startSymbol)) {
             String[] symbols = expansion.split("");
             StringBuilder result = new StringBuilder();
             for (String symbol : symbols) {
