@@ -1,14 +1,11 @@
-import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
 public class GrammarParser {
-
-    public Map<String, ArrayList<String>> parseGrammar(String inputPath) {
+    public static HashMap<String, ArrayList<String>> parseGrammar(String inputPath) {
         String[] lines = FileIO.readFile(inputPath, true, true);
-        Map<String, ArrayList<String>> productionRules = new HashMap<>();
+        HashMap<String, ArrayList<String>> productionRules = new HashMap<>();
         assert lines != null;
         for (String line : lines) {
             String[] parts = line.split("->");
