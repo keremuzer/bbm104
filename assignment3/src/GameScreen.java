@@ -25,28 +25,28 @@ public class GameScreen {
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case UP:
-                    player.setVelocity(0, -1.5);
+                    player.setVelocity(0, -2.5);
                     break;
                 case DOWN:
-                    player.setVelocity(0, 1.5);
+                    player.setVelocity(0, 2.5);
+                    player.setImage(player.getDownImg());
                     break;
                 case LEFT:
-                    player.setVelocity(-1.5, 0);
+                    player.setVelocity(-2.5, 0);
                     break;
                 case RIGHT:
-                    player.setVelocity(1.5, 0);
+                    player.setVelocity(2.5, 0);
                     break;
             }
         });
     }
 
     public void handleKeyRelease() {
-        scene.setOnKeyReleased(e -> {
-            player.setVelocity(0, 0);
-        });
+        scene.setOnKeyReleased(e -> player.setVelocity(0, 1));
     }
 
     public void startGame() {
+        player.setVelocity(0, 1);
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
