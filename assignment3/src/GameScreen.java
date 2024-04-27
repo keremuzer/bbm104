@@ -9,6 +9,7 @@ public class GameScreen {
         this.root = new Group();
         this.scene = new Scene(root, 800, 600);
         scene.setFill(javafx.scene.paint.Paint.valueOf("#004873"));
+        root.getChildren().add(new Player());
     }
 
     public Scene getScene() {
