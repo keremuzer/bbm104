@@ -1,4 +1,3 @@
-import com.sun.javafx.scene.traversal.Direction;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -15,7 +14,7 @@ public class Player extends ImageView {
         this.downImg = new Image("assets/drill/drill_44.png");
         setImage(leftImg);
         this.setX(400);
-        this.setY(300);
+        this.setY(550);
     }
 
     public void move() {
@@ -39,5 +38,13 @@ public class Player extends ImageView {
 
     public Image getDownImg() {
         return downImg;
+    }
+
+    public double getXVelocity() {
+        return xVelocity;
+    }
+
+    public double getYVelocity() {
+        return yVelocity;
     }
 }
