@@ -14,7 +14,7 @@ public class Player extends ImageView {
         this.downImg = new Image("assets/drill/drill_44.png");
         setImage(leftImg);
         this.setX(400);
-        this.setY(550);
+        this.setY(10);
     }
 
     public void move() {
@@ -27,10 +27,10 @@ public class Player extends ImageView {
         this.yVelocity = y;
         if (x > 0) {
             setImage(leftImg);
-            this.setScaleX(-1);
+            this.setScaleX(-0.9);
         } else if (x < 0) {
             setImage(leftImg);
-            this.setScaleX(1);
+            this.setScaleX(0.9);
         } else if (y < 0) {
             setImage(upImg);
         }

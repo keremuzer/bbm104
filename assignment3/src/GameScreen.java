@@ -1,4 +1,6 @@
 import javafx.animation.AnimationTimer;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.shape.Rectangle;
@@ -19,6 +21,8 @@ public class GameScreen {
         scene.setFill(javafx.scene.paint.Paint.valueOf("#004873"));
         createUnderground();
         player = new Player();
+        player.setScaleX(0.9);
+        player.setScaleY(0.9);
         root.getChildren().add(player);
         handleKeyPress();
         handleKeyRelease();
@@ -82,7 +86,7 @@ public class GameScreen {
     }
 
     public void handleKeyRelease() {
-        scene.setOnKeyReleased(e -> player.setVelocity(0, 1));
+        scene.setOnKeyReleased(e -> player.setVelocity(0, 2));
     }
 
     public void startGame() {
@@ -91,6 +95,44 @@ public class GameScreen {
             @Override
             public void handle(long now) {
                 player.move();
+                root.getChildren().remove(elements[0][0]);
+                elements[0][0] = null;
+                root.getChildren().remove(elements[0][1]);
+                elements[0][1] = null;
+                root.getChildren().remove(elements[1][0]);
+                elements[1][0] = null;
+                root.getChildren().remove(elements[1][1]);
+                elements[1][1] = null;
+                Bounds bounds = new BoundingBox(
+                        player.getBoundsInParent().getMinX() + 22,
+                        player.getBoundsInParent().getMinY() + 12,
+                        player.getBoundsInParent().getWidth() - 2 * 22,
+                        player.getBoundsInParent().getHeight() - 2 * 12
+                );
+
+                // if player is touching any element stop player from moving in that direction.
+                for (int i = 0; i < 16; i++) {
+                    for (int j = 0; j < 10; j++) {
+                        if (elements[i][j] == null) {
+                            continue;
+                        }
+                        // if player is touching any element from the left side
+                        if (bounds.intersects(elements[i][j].getBoundsInParent()) && player.getXVelocity() > 0) {
+                            player.setX(player.getX() - player.getXVelocity());
+                            player.setVelocity(0, player.getYVelocity());
+                        }
+                        // if player is touching any element from the right side
+                        if (bounds.intersects(elements[i][j].getBoundsInParent()) && player.getXVelocity() < 0) {
+                            player.setX(player.getX() - player.getXVelocity());
+                            player.setVelocity(0, player.getYVelocity());
+                        }
+                        // if player is touching any element from the top side
+                        if (bounds.intersects(elements[i][j].getBoundsInParent()) && player.getYVelocity() > 0) {
+                            player.setY(player.getY() - player.getYVelocity());
+                            player.setVelocity(player.getXVelocity(), 0);
+                        }
+                    }
+                }
             }
         };
         timer.start();
