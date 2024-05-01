@@ -3,6 +3,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
 import java.util.Random;
 
@@ -103,7 +104,7 @@ public class GameScreen {
                 player.setX(player.getX() + deltaX);
                 player.setY(player.getY() + deltaY);
 
-                player.setFuel(player.getFuel() - 10);
+                player.setFuel(player.getFuel() - 100);
 
                 // Update the player's image based on the direction
                 updatePlayerImage(event.getCode());
@@ -121,7 +122,7 @@ public class GameScreen {
                 player.setX(player.getX() + deltaX);
                 player.setY(player.getY() + deltaY);
 
-                player.setFuel(player.getFuel() - 10);
+                player.setFuel(player.getFuel() - 100);
 
                 // Remove the drilled element
                 root.getChildren().remove(element);
@@ -157,16 +158,36 @@ public class GameScreen {
         }
     }
 
+    public void displayAttributes() {
+        // Display the player's money, fuel, and haul on screen
+        root.getChildren().removeIf(node -> node instanceof Text);
+        Text fuelText = new Text(10, 20, "Fuel: " + player.getFuel());
+        Text haulText = new Text(10, 40, "Haul: " + player.getHaul());
+        Text moneyText = new Text(10, 60, "Money: " + player.getMoney());
+        fuelText.setFill(javafx.scene.paint.Paint.valueOf("#FFFFFF"));
+        haulText.setFill(javafx.scene.paint.Paint.valueOf("#FFFFFF"));
+        moneyText.setFill(javafx.scene.paint.Paint.valueOf("#FFFFFF"));
+        fuelText.setFont(javafx.scene.text.Font.font(20));
+        haulText.setFont(javafx.scene.text.Font.font(20));
+        moneyText.setFont(javafx.scene.text.Font.font(20));
+        root.getChildren().addAll(moneyText, fuelText, haulText);
+    }
 
     public void startGame() {
         timer = new AnimationTimer() {
+            int displayCounter = 0;
+
             @Override
             public void handle(long now) {
-                player.setFuel(player.getFuel() - 0.01);
-                System.out.println(player.getFuel());
-                System.out.println(player.getMoney());
+                displayCounter++;
+                if (displayCounter > 10) {
+                    player.setFuel(player.getFuel() - 1);
+                    displayAttributes();
+                    displayCounter = 0;
+                }
+
                 counter++;
-                if (counter > 20 && player.getGridY() + 1 < elements[0].length && elements[player.getGridX()][player.getGridY() + 1] == null) {
+                if (counter > 50 && player.getGridY() + 1 < elements[0].length && elements[player.getGridX()][player.getGridY() + 1] == null) {
                     player.move(0, 50); // Move down one grid cell in pixel terms
                     player.setGridY(player.getGridY() + 1); // Increment the gridY to reflect the new position
                     counter = 0;

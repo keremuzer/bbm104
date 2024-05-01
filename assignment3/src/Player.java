@@ -13,7 +13,7 @@ public class Player extends ImageView {
 
     public Player() {
         this.money = 0;
-        this.fuel = 1000;
+        this.fuel = 10000;
         this.leftImg = new Image("assets/drill/drill_01.png");
         this.upImg = new Image("assets/drill/drill_24.png");
         this.downImg = new Image("assets/drill/drill_44.png");
