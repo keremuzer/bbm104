@@ -2,19 +2,21 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 import java.util.Random;
 
 public class GameScreen {
-    int counter = 0;
     private Scene scene;
     private Group root;
     private Player player;
     private AnimationTimer timer;
     private Rectangle underground;
     private Element[][] elements;
+    private int counter = 0;
+    private boolean destroyed = false;
 
     public GameScreen() {
         this.root = new Group();
@@ -108,7 +110,9 @@ public class GameScreen {
 
                 // Update the player's image based on the direction
                 updatePlayerImage(event.getCode());
-            } else if (isValidPosition(newGridX, newGridY) && element.isDrillable() && event.getCode() != KeyCode.UP) {
+            } else if (element instanceof Lava) {
+                destroyed = true;
+            } else if (element.isDrillable() && event.getCode() != KeyCode.UP) {
                 if (element instanceof Mineral) {
                     Mineral mineral = (Mineral) element;
                     player.collect(mineral.getWorth()); // Collect the value of the mineral
@@ -179,6 +183,31 @@ public class GameScreen {
 
             @Override
             public void handle(long now) {
+                if (destroyed) {
+                    timer.stop();
+                    // display game over text with red background
+                    Rectangle background = new Rectangle(0, 0, 800, 800);
+                    background.setFill(Color.DARKRED);
+                    Text gameOver = new Text(260, 400, "GAME OVER");
+                    gameOver.setFill(Color.WHITE);
+                    gameOver.setFont(javafx.scene.text.Font.font(50));
+                    root.getChildren().addAll(background, gameOver);
+                    return;
+                }
+                if (player.getFuel() <= 0) {
+                    timer.stop();
+                    // display game over text with green background
+                    Rectangle background = new Rectangle(0, 0, 800, 800);
+                    background.setFill(Color.DARKGREEN);
+                    Text gameOver = new Text(260, 400, "GAME OVER");
+                    gameOver.setFill(Color.WHITE);
+                    gameOver.setFont(javafx.scene.text.Font.font(50));
+                    Text money = new Text(180, 450, "Collected Money: " + player.getMoney());
+                    money.setFill(Color.WHITE);
+                    money.setFont(javafx.scene.text.Font.font(40));
+                    root.getChildren().addAll(background, gameOver, money);
+                    return;
+                }
                 displayCounter++;
                 if (displayCounter > 10) {
                     player.setFuel(player.getFuel() - 1);
