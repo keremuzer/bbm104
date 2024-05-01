@@ -3,7 +3,7 @@ public class Mineral extends Element {
     private int weight;
 
     public Mineral(String imagePath, int worth, int weight) {
-        super(imagePath);
+        super(imagePath, true);
         this.worth = worth;
         this.weight = weight;
     }
