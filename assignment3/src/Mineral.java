@@ -7,4 +7,12 @@ public class Mineral extends Element {
         this.worth = worth;
         this.weight = weight;
     }
+
+    public int getWorth() {
+        return worth;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
 }

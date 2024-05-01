@@ -7,6 +7,7 @@ import javafx.scene.shape.Rectangle;
 import java.util.Random;
 
 public class GameScreen {
+    int counter = 0;
     private Scene scene;
     private Group root;
     private Player player;
@@ -92,7 +93,8 @@ public class GameScreen {
                     newGridX++;
                     break;
             }
-            if (elements[newGridX][newGridY] == null) {
+            Element element = elements[newGridX][newGridY];
+            if (isValidPosition(newGridX, newGridY) && element == null) {
                 // Update player's grid position
                 player.setGridX(newGridX);
                 player.setGridY(newGridY);
@@ -100,12 +102,17 @@ public class GameScreen {
                 // Update player's visual position
                 player.setX(player.getX() + deltaX);
                 player.setY(player.getY() + deltaY);
+
+                player.setFuel(player.getFuel() - 10);
 
                 // Update the player's image based on the direction
                 updatePlayerImage(event.getCode());
-            }
-            // Check if the new grid position is valid and if the element is drillable
-            if (isValidPosition(newGridX, newGridY) && elements[newGridX][newGridY].isDrillable()) {
+            } else if (isValidPosition(newGridX, newGridY) && element.isDrillable() && event.getCode() != KeyCode.UP) {
+                if (element instanceof Mineral) {
+                    Mineral mineral = (Mineral) element;
+                    player.collect(mineral.getWorth()); // Collect the value of the mineral
+                    player.setHaul(player.getHaul() + mineral.getWeight());
+                }
                 // Update player's grid position
                 player.setGridX(newGridX);
                 player.setGridY(newGridY);
@@ -113,6 +120,12 @@ public class GameScreen {
                 // Update player's visual position
                 player.setX(player.getX() + deltaX);
                 player.setY(player.getY() + deltaY);
+
+                player.setFuel(player.getFuel() - 10);
+
+                // Remove the drilled element
+                root.getChildren().remove(element);
+                elements[newGridX][newGridY] = null;
 
                 // Update the player's image based on the direction
                 updatePlayerImage(event.getCode());
@@ -128,6 +141,7 @@ public class GameScreen {
         switch (code) {
             case UP:
                 player.setImage(player.getUpImg());
+                counter = 0;
                 break;
             case DOWN:
                 player.setImage(player.getDownImg());
@@ -146,12 +160,13 @@ public class GameScreen {
 
     public void startGame() {
         timer = new AnimationTimer() {
-            int counter = 0;
-
             @Override
             public void handle(long now) {
+                player.setFuel(player.getFuel() - 0.01);
+                System.out.println(player.getFuel());
+                System.out.println(player.getMoney());
                 counter++;
-                if (counter > 50 && player.getGridY() + 1 < elements[0].length && elements[player.getGridX()][player.getGridY() + 1] == null) {
+                if (counter > 20 && player.getGridY() + 1 < elements[0].length && elements[player.getGridX()][player.getGridY() + 1] == null) {
                     player.move(0, 50); // Move down one grid cell in pixel terms
                     player.setGridY(player.getGridY() + 1); // Increment the gridY to reflect the new position
                     counter = 0;

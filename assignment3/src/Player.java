@@ -2,6 +2,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class Player extends ImageView {
+    private int money;
+    private int haul;
+    private double fuel;
     private Image leftImg;
     private Image upImg;
     private Image downImg;
@@ -9,6 +12,8 @@ public class Player extends ImageView {
     private int gridY;
 
     public Player() {
+        this.money = 0;
+        this.fuel = 1000;
         this.leftImg = new Image("assets/drill/drill_01.png");
         this.upImg = new Image("assets/drill/drill_24.png");
         this.downImg = new Image("assets/drill/drill_44.png");
@@ -17,6 +22,10 @@ public class Player extends ImageView {
         this.setY(-8);
         this.gridX = 9;
         this.gridY = 0;
+    }
+
+    public void collect(int worth) {
+        money += worth;
     }
 
     public void move(double x, double y) {
@@ -50,5 +59,25 @@ public class Player extends ImageView {
 
     public void setGridY(int gridY) {
         this.gridY = gridY;
+    }
+
+    public double getMoney() {
+        return money;
+    }
+
+    public int getHaul() {
+        return haul;
+    }
+
+    public void setHaul(int haul) {
+        this.haul = haul;
+    }
+
+    public double getFuel() {
+        return fuel;
+    }
+
+    public void setFuel(double fuel) {
+        this.fuel = fuel;
     }
 }
