@@ -7,6 +7,10 @@ public class Main extends Application {
         launch(args);
     }
 
+    /**
+     * Start the game.
+     * @param stage The stage to display the game.
+     */
     public void start(Stage stage) {
         GameScreen gameScreen = new GameScreen();
         Scene scene = gameScreen.getScene();

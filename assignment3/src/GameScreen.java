@@ -12,18 +12,19 @@ import javafx.scene.text.Text;
 import java.util.Random;
 
 public class GameScreen {
-    private Scene scene;
-    private Group root;
-    private Player player;
-    private Pane displayPane;
-    private StackPane stackPane;
-    private ScrollPane scrollPane;
+    private final Scene scene;
+    private final Group root;
+    private final Player player;
+    private final Pane displayPane;
+    private final ScrollPane scrollPane;
     private AnimationTimer timer;
-    private Rectangle underground;
     private Element[][] elements;
     private int counter = 0;
     private boolean destroyed = false;
 
+    /**
+     * Create a new game screen.
+     */
     public GameScreen() {
         this.root = new Group();
         this.scrollPane = new ScrollPane();
@@ -35,19 +36,20 @@ public class GameScreen {
         scrollPane.setStyle("-fx-background: #004873;");
         scrollPane.setVvalue(0);
         this.displayPane = new Pane();
-        this.stackPane = new StackPane(scrollPane, displayPane);
+        StackPane stackPane = new StackPane(scrollPane, displayPane);
         this.scene = new Scene(stackPane, 800, 800);
         createUnderground();
         player = new Player();
-        player.setScaleX(0.9);
-        player.setScaleY(0.9);
         root.getChildren().add(player);
         handleKeyPress();
         startGame();
     }
 
-    public void createUnderground() {
-        underground = new Rectangle(800, 1500);
+    /**
+     * Create the underground elements randomly.
+     */
+    private void createUnderground() {
+        Rectangle underground = new Rectangle(800, 1500);
         underground.setFill(javafx.scene.paint.Paint.valueOf("#8B4513"));
         underground.setY(103);
         root.getChildren().add(underground);
@@ -56,9 +58,9 @@ public class GameScreen {
         Random random = new Random();
         Element element;
         for (int i = 0; i < 800; i += 50) {
-            for (int j = 100; j < 1600; j += 50) { // Start from 100 to align with the underground Y
+            for (int j = 100; j < 1600; j += 50) {
                 int gridX = i / 50;
-                int gridY = j / 50; // Adjust gridY to start from 0 at Y=100
+                int gridY = j / 50;
 
                 if (j == 100) {
                     element = new Dirt("assets/underground/top_01.png");
@@ -66,9 +68,9 @@ public class GameScreen {
                     element = new Obstacle("assets/underground/obstacle_01.png");
                 } else {
                     int rand = random.nextInt(100);
-                    if (rand > 95 && j >= 400) { // Adjusting depth checks to grid system
+                    if (rand > 95 && j >= 800) {
                         element = new Mineral("assets/underground/valuable_emerald.png", 5000, 60);
-                    } else if (rand > 88 && j >= 300) {
+                    } else if (rand > 88 && j >= 400) {
                         element = new Mineral("assets/underground/valuable_goldium.png", 250, 20);
                     } else if (rand > 80 && j >= 200) {
                         element = new Mineral("assets/underground/valuable_silverium.png", 100, 10);
@@ -80,13 +82,16 @@ public class GameScreen {
                 }
                 element.setX(i);
                 element.setY(j);
-                elements[gridX][gridY] = element; // Properly assign to grid
+                elements[gridX][gridY] = element;
                 root.getChildren().add(element);
             }
         }
     }
 
-    public void handleKeyPress() {
+    /**
+     * Handle key press events and update the player's position.
+     */
+    private void handleKeyPress() {
         scene.setOnKeyPressed(event -> {
             int deltaX = 0;
             int deltaY = 0;
@@ -97,6 +102,7 @@ public class GameScreen {
                 case UP:
                     deltaY = -50;
                     newGridY--;
+                    counter = 0;
                     break;
                 case DOWN:
                     deltaY = 50;
@@ -112,19 +118,17 @@ public class GameScreen {
                     break;
             }
             Element element = elements[newGridX][newGridY];
-            if (isValidPosition(newGridX, newGridY) && element == null) {
+            if (element == null) {
                 // Update player's grid position
                 player.setGridX(newGridX);
                 player.setGridY(newGridY);
-
-                // Update player's visual position
                 player.setX(player.getX() + deltaX);
                 player.setY(player.getY() + deltaY);
 
                 player.setFuel(player.getFuel() - 100);
 
                 // Update the player's image based on the direction
-                updatePlayerImage(event.getCode());
+                player.updatePlayerImage(event.getCode());
             } else if (element instanceof Lava) {
                 destroyed = true;
             } else if (element.isDrillable() && event.getCode() != KeyCode.UP) {
@@ -136,8 +140,6 @@ public class GameScreen {
                 // Update player's grid position
                 player.setGridX(newGridX);
                 player.setGridY(newGridY);
-
-                // Update player's visual position
                 player.setX(player.getX() + deltaX);
                 player.setY(player.getY() + deltaY);
 
@@ -148,36 +150,15 @@ public class GameScreen {
                 elements[newGridX][newGridY] = null;
 
                 // Update the player's image based on the direction
-                updatePlayerImage(event.getCode());
+                player.updatePlayerImage(event.getCode());
             }
         });
     }
 
-    private boolean isValidPosition(int x, int y) {
-        return x >= 0 && x < elements.length && y >= 0 && y < elements[0].length;
-    }
-
-    private void updatePlayerImage(KeyCode code) {
-        switch (code) {
-            case UP:
-                player.setImage(player.getUpImg());
-                counter = 0;
-                break;
-            case DOWN:
-                player.setImage(player.getDownImg());
-                break;
-            case LEFT:
-                player.setScaleX(0.9);  // Ensure player faces left
-                player.setImage(player.getLeftImg());
-                break;
-            case RIGHT:
-                player.setScaleX(-0.9); // Ensure player faces right
-                player.setImage(player.getLeftImg());
-                break;
-        }
-    }
-
-    public void displayAttributes() {
+    /**
+     * Display the player's attributes.
+     */
+    private void displayAttributes() {
         displayPane.getChildren().clear();
         Text fuelText = new Text(10, 20, "Fuel: " + player.getFuel());
         Text haulText = new Text(10, 40, "Haul: " + player.getHaul());
@@ -191,7 +172,10 @@ public class GameScreen {
         displayPane.getChildren().addAll(fuelText, haulText, moneyText);
     }
 
-    public void startGame() {
+    /**
+     * Start the game. The game will run until the player runs out of fuel or hits lava.
+     */
+    private void startGame() {
         timer = new AnimationTimer() {
             int displayCounter = 0;
 
@@ -237,9 +221,9 @@ public class GameScreen {
                 }
 
                 counter++;
-                if (counter > 50 && player.getGridY() + 1 < elements[0].length && elements[player.getGridX()][player.getGridY() + 1] == null) {
-                    player.move(0, 50); // Move down one grid cell in pixel terms
-                    player.setGridY(player.getGridY() + 1); // Increment the gridY to reflect the new position
+                if (counter > 40 && player.getGridY() + 1 < elements[0].length && elements[player.getGridX()][player.getGridY() + 1] == null) {
+                    player.move(0, 50);
+                    player.setGridY(player.getGridY() + 1);
                     counter = 0;
                 }
             }

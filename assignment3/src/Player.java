@@ -1,16 +1,20 @@
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 
 public class Player extends ImageView {
+    private final Image leftImg;
+    private final Image upImg;
+    private final Image downImg;
     private int money;
     private int haul;
     private double fuel;
-    private Image leftImg;
-    private Image upImg;
-    private Image downImg;
     private int gridX;
     private int gridY;
 
+    /**
+     * Create a new player.
+     */
     public Player() {
         this.money = 0;
         this.fuel = 10000;
@@ -22,27 +26,52 @@ public class Player extends ImageView {
         this.setY(-8);
         this.gridX = 9;
         this.gridY = 0;
+        this.setScaleX(0.9);
+        this.setScaleY(0.9);
     }
 
+    /**
+     * Collect money.
+     *
+     * @param worth The worth of the mineral.
+     */
     public void collect(int worth) {
         money += worth;
     }
 
+    /**
+     * Move the player.
+     *
+     * @param x The x coordinate to move.
+     * @param y The y coordinate to move.
+     */
     public void move(double x, double y) {
         this.setX(this.getX() + x);
         this.setY(this.getY() + y);
     }
 
-    public Image getDownImg() {
-        return downImg;
-    }
-
-    public Image getUpImg() {
-        return upImg;
-    }
-
-    public Image getLeftImg() {
-        return leftImg;
+    /**
+     * Update the player's image based on the key pressed.
+     *
+     * @param code The key code.
+     */
+    public void updatePlayerImage(KeyCode code) {
+        switch (code) {
+            case UP:
+                setImage(upImg);
+                break;
+            case DOWN:
+                setImage(downImg);
+                break;
+            case LEFT:
+                setScaleX(0.9);  // make the player face left
+                setImage(leftImg);
+                break;
+            case RIGHT:
+                setScaleX(-0.9); // make the player face right
+                setImage(leftImg);
+                break;
+        }
     }
 
     public int getGridX() {
