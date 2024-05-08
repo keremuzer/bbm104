@@ -1,7 +1,10 @@
 import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -12,6 +15,9 @@ public class GameScreen {
     private Scene scene;
     private Group root;
     private Player player;
+    private Pane displayPane;
+    private StackPane stackPane;
+    private ScrollPane scrollPane;
     private AnimationTimer timer;
     private Rectangle underground;
     private Element[][] elements;
@@ -20,8 +26,17 @@ public class GameScreen {
 
     public GameScreen() {
         this.root = new Group();
-        this.scene = new Scene(root, 800, 800);
-        scene.setFill(javafx.scene.paint.Paint.valueOf("#004873"));
+        this.scrollPane = new ScrollPane();
+        scrollPane.setContent(root);
+        scrollPane.setPrefViewportWidth(800);
+        scrollPane.setPrefViewportHeight(1600);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // disable horizontal scroll
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // disable vertical scroll
+        scrollPane.setStyle("-fx-background: #004873;");
+        scrollPane.setVvalue(0);
+        this.displayPane = new Pane();
+        this.stackPane = new StackPane(scrollPane, displayPane);
+        this.scene = new Scene(stackPane, 800, 800);
         createUnderground();
         player = new Player();
         player.setScaleX(0.9);
@@ -32,22 +47,22 @@ public class GameScreen {
     }
 
     public void createUnderground() {
-        underground = new Rectangle(800, 700);
+        underground = new Rectangle(800, 1500);
         underground.setFill(javafx.scene.paint.Paint.valueOf("#8B4513"));
         underground.setY(103);
         root.getChildren().add(underground);
-        elements = new Element[16][16]; // Corresponds to 16 rows and columns in a 800x800 screen
+        elements = new Element[16][32]; // Corresponds to 16 rows and columns in a 800x800 screen
 
         Random random = new Random();
         Element element;
         for (int i = 0; i < 800; i += 50) {
-            for (int j = 100; j < 800; j += 50) { // Start from 100 to align with the underground Y
+            for (int j = 100; j < 1600; j += 50) { // Start from 100 to align with the underground Y
                 int gridX = i / 50;
-                int gridY = (j) / 50; // Adjust gridY to start from 0 at Y=100
+                int gridY = j / 50; // Adjust gridY to start from 0 at Y=100
 
                 if (j == 100) {
                     element = new Dirt("assets/underground/top_01.png");
-                } else if (i == 0 || i == 750 || j == 750) {
+                } else if (i == 0 || i == 750 || j == 1500) {
                     element = new Obstacle("assets/underground/obstacle_01.png");
                 } else {
                     int rand = random.nextInt(100);
@@ -163,18 +178,17 @@ public class GameScreen {
     }
 
     public void displayAttributes() {
-        // Display the player's money, fuel, and haul on screen
-        root.getChildren().removeIf(node -> node instanceof Text);
+        displayPane.getChildren().clear();
         Text fuelText = new Text(10, 20, "Fuel: " + player.getFuel());
         Text haulText = new Text(10, 40, "Haul: " + player.getHaul());
         Text moneyText = new Text(10, 60, "Money: " + player.getMoney());
         fuelText.setFill(javafx.scene.paint.Paint.valueOf("#FFFFFF"));
         haulText.setFill(javafx.scene.paint.Paint.valueOf("#FFFFFF"));
         moneyText.setFill(javafx.scene.paint.Paint.valueOf("#FFFFFF"));
-        fuelText.setFont(javafx.scene.text.Font.font(20));
-        haulText.setFont(javafx.scene.text.Font.font(20));
-        moneyText.setFont(javafx.scene.text.Font.font(20));
-        root.getChildren().addAll(moneyText, fuelText, haulText);
+        fuelText.setFont(javafx.scene.text.Font.font(24));
+        haulText.setFont(javafx.scene.text.Font.font(24));
+        moneyText.setFont(javafx.scene.text.Font.font(24));
+        displayPane.getChildren().addAll(fuelText, haulText, moneyText);
     }
 
     public void startGame() {
@@ -183,20 +197,27 @@ public class GameScreen {
 
             @Override
             public void handle(long now) {
+                if (player.getY() < 150) {
+                    scrollPane.setVvalue(0);
+                } else if (player.getY() > 150) {
+                    scrollPane.setVvalue(player.getY() / 1600);
+                }
                 if (destroyed) {
                     timer.stop();
                     // display game over text with red background
+                    displayPane.getChildren().clear();
                     Rectangle background = new Rectangle(0, 0, 800, 800);
                     background.setFill(Color.DARKRED);
                     Text gameOver = new Text(260, 400, "GAME OVER");
                     gameOver.setFill(Color.WHITE);
                     gameOver.setFont(javafx.scene.text.Font.font(50));
-                    root.getChildren().addAll(background, gameOver);
+                    displayPane.getChildren().addAll(background, gameOver);
                     return;
                 }
                 if (player.getFuel() <= 0) {
                     timer.stop();
                     // display game over text with green background
+                    displayPane.getChildren().clear();
                     Rectangle background = new Rectangle(0, 0, 800, 800);
                     background.setFill(Color.DARKGREEN);
                     Text gameOver = new Text(260, 400, "GAME OVER");
@@ -205,7 +226,7 @@ public class GameScreen {
                     Text money = new Text(180, 450, "Collected Money: " + player.getMoney());
                     money.setFill(Color.WHITE);
                     money.setFont(javafx.scene.text.Font.font(40));
-                    root.getChildren().addAll(background, gameOver, money);
+                    displayPane.getChildren().addAll(background, gameOver, money);
                     return;
                 }
                 displayCounter++;
