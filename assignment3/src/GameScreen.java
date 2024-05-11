@@ -11,6 +11,9 @@ import javafx.scene.text.Text;
 
 import java.util.Random;
 
+/**
+ * This class is responsible for creating the game screen and handling the game logic.
+ */
 public class GameScreen {
     private final Scene scene;
     private final Group root;
@@ -23,10 +26,11 @@ public class GameScreen {
     private boolean destroyed = false;
 
     /**
-     * Create a new game screen.
+     * Create a new game screen. The game screen contains the player, underground elements, and player's attributes.
      */
     public GameScreen() {
         this.root = new Group();
+        // Create a scroll pane to allow the screen to scroll
         this.scrollPane = new ScrollPane();
         scrollPane.setContent(root);
         scrollPane.setPrefViewportWidth(800);
@@ -35,6 +39,7 @@ public class GameScreen {
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // disable vertical scroll
         scrollPane.setStyle("-fx-background: #004873;");
         scrollPane.setVvalue(0);
+        // Create a display pane to show the player's attributes and game over screens
         this.displayPane = new Pane();
         StackPane stackPane = new StackPane(scrollPane, displayPane);
         this.scene = new Scene(stackPane, 800, 800);
@@ -53,7 +58,7 @@ public class GameScreen {
         underground.setFill(javafx.scene.paint.Paint.valueOf("#8B4513"));
         underground.setY(103);
         root.getChildren().add(underground);
-        elements = new Element[16][32]; // Corresponds to 16 rows and columns in a 800x800 screen
+        elements = new Element[16][32]; // Corresponds to 16 rows and 32 columns in a 800x1600 screen
 
         Random random = new Random();
         Element element;
@@ -61,7 +66,6 @@ public class GameScreen {
             for (int j = 100; j < 1600; j += 50) {
                 int gridX = i / 50;
                 int gridY = j / 50;
-
                 if (j == 100) {
                     element = new Dirt("assets/underground/top_01.png");
                 } else if (i == 0 || i == 750 || j == 1500) {
@@ -176,19 +180,21 @@ public class GameScreen {
      * Start the game. The game will run until the player runs out of fuel or hits lava.
      */
     private void startGame() {
+        // Update the game every frame
         timer = new AnimationTimer() {
             int displayCounter = 0;
 
             @Override
             public void handle(long now) {
+                // scroll the screen when the player moves vertically
                 if (player.getY() < 150) {
                     scrollPane.setVvalue(0);
                 } else if (player.getY() > 150) {
                     scrollPane.setVvalue(player.getY() / 1600);
                 }
+                // display game over text with red background when player hits lava
                 if (destroyed) {
                     timer.stop();
-                    // display game over text with red background
                     displayPane.getChildren().clear();
                     Rectangle background = new Rectangle(0, 0, 800, 800);
                     background.setFill(Color.DARKRED);
@@ -198,9 +204,9 @@ public class GameScreen {
                     displayPane.getChildren().addAll(background, gameOver);
                     return;
                 }
+                // display game over text with green background when player runs out of fuel
                 if (player.getFuel() <= 0) {
                     timer.stop();
-                    // display game over text with green background
                     displayPane.getChildren().clear();
                     Rectangle background = new Rectangle(0, 0, 800, 800);
                     background.setFill(Color.DARKGREEN);
@@ -213,13 +219,14 @@ public class GameScreen {
                     displayPane.getChildren().addAll(background, gameOver, money);
                     return;
                 }
+                // decrease fuel every 10 frames and update the display
                 displayCounter++;
                 if (displayCounter > 10) {
                     player.setFuel(player.getFuel() - 1);
                     displayAttributes();
                     displayCounter = 0;
                 }
-
+                // move the player down automatically every 40 frames if there is no obstacle
                 counter++;
                 if (counter > 40 && player.getGridY() + 1 < elements[0].length && elements[player.getGridX()][player.getGridY() + 1] == null) {
                     player.move(0, 50);
