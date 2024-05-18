@@ -1,3 +1,8 @@
+/**
+ * Book class is a subclass of Item class. It has an author attribute.
+ * It has a constructor to initialize the attributes.
+ * It has a toString method to return the information of the book.
+ */
 public class Book extends Item {
     private String author;
 

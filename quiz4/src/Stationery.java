@@ -1,3 +1,8 @@
+/**
+ * Stationery class is a subclass of Item class.
+ * It has a constructor to initialize the attributes.
+ * It has a toString method to return the attributes.
+ */
 public class Stationery extends Item {
     private String kind;
 

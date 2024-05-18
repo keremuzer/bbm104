@@ -1,3 +1,8 @@
+/**
+ * Toy class is a subclass of Item class. It has a color attribute.
+ * It has a constructor to initialize the attributes.
+ * It has a toString method to return the attributes of the Toy object.
+ */
 public class Toy extends Item {
     private String color;
 
