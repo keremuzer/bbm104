@@ -9,8 +9,6 @@ public abstract class Item {
         this.price = price;
     }
 
-    public abstract String getType();
-
     public String getName() {
         return name;
     }
