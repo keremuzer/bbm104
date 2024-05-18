@@ -1,15 +1,16 @@
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class Inventory<T> {
-    private HashMap<Integer, T> items;
+    private LinkedHashMap<Integer, T> items;
 
     public Inventory() {
-        items = new HashMap<>();
+        items = new LinkedHashMap<>();
     }
 
     public void executeCommands(String inputPath, String outputPath) {
-        Inventory<Item> inventory = new Inventory<>();
         String[] commands = FileIO.readFile(inputPath, true, true);
+        FileIO.writeToFile(outputPath, "", false, false);
 
         for (String line : commands) {
             String[] parts = line.split("\t");
@@ -24,42 +25,46 @@ public class Inventory<T> {
                     switch (type) {
                         case "Book":
                             String author = parts[3];
-                            inventory.addItem(new Book(name, author, barcode, price));
+                            this.addItem(new Book(name, author, barcode, price));
                             break;
                         case "Toy":
                             String color = parts[3];
-                            inventory.addItem(new Toy(name, color, barcode, price));
+                            this.addItem(new Toy(name, color, barcode, price));
                             break;
                         case "Stationery":
                             String kind = parts[3];
-                            inventory.addItem(new Stationery(name, kind, barcode, price));
+                            this.addItem(new Stationery(name, kind, barcode, price));
                             break;
                     }
                     break;
                 case "REMOVE":
                     barcode = Integer.parseInt(parts[1]);
-                    inventory.removeItem(barcode, outputPath);
+                    this.removeItem(barcode, outputPath);
                     break;
                 case "SEARCHBYBARCODE":
                     barcode = Integer.parseInt(parts[1]);
-                    searchByBarcode(barcode, outputPath);
+                    this.searchByBarcode(barcode, outputPath);
                     break;
                 case "SEARCHBYNAME":
                     String searchName = parts[1];
-                    searchByName(searchName, outputPath);
+                    this.searchByName(searchName, outputPath);
                     break;
                 case "DISPLAY":
-                    displayItems(outputPath);
+                    this.displayItems(outputPath);
                     break;
             }
         }
     }
 
-    private void addItem(T item) {
-        items.put(((Item) item).getBarcode(), item);
+    private <E> void addItem(E item) {
+        items.put(((Item) item).getBarcode(), (T) item);
     }
 
     private void removeItem(int barcode, String outputPath) {
+        if (!items.containsKey(barcode)) {
+            FileIO.writeToFile(outputPath, "REMOVE RESULTS:\nItem is not found.\n------------------------------", true, true);
+            return;
+        }
         items.remove(barcode);
         FileIO.writeToFile(outputPath, "REMOVE RESULTS:\nItem is removed.\n------------------------------", true, true);
     }
@@ -75,7 +80,7 @@ public class Inventory<T> {
     private void searchByName(String searchName, String outputPath) {
         for (T item : items.values()) {
             if (((Item) item).getName().equals(searchName)) {
-                FileIO.writeToFile(outputPath, "SEARCH RESULTS:\n" + item.toString() + "\n------------------------------", true, true);
+                FileIO.writeToFile(outputPath, "SEARCH RESULTS:\n" + item + "\n------------------------------", true, true);
                 return;
             }
         }
@@ -85,8 +90,21 @@ public class Inventory<T> {
     private void displayItems(String outputPath) {
         FileIO.writeToFile(outputPath, "INVENTORY:", true, true);
         for (T item : items.values()) {
-            FileIO.writeToFile(outputPath, item.toString(), true, true);
+            if (item instanceof Book) {
+                FileIO.writeToFile(outputPath, item.toString(), true, true);
+            }
         }
+        for (T item : items.values()) {
+            if (item instanceof Toy) {
+                FileIO.writeToFile(outputPath, item.toString(), true, true);
+            }
+        }
+        for (T item : items.values()) {
+            if (item instanceof Stationery) {
+                FileIO.writeToFile(outputPath, item.toString(), true, true);
+            }
+        }
+
         FileIO.writeToFile(outputPath, "------------------------------", true, true);
     }
 }
