@@ -36,13 +36,20 @@ public class Inventory<T> {
                             break;
                     }
                     break;
-
-
+                case "REMOVE":
+                    barcode = Integer.parseInt(parts[1]);
+                    inventory.removeItem(barcode);
+                    FileIO.writeToFile(outputPath, "REMOVE RESULTS:\nItem is removed.\n------------------------------", true, true);
+                    break;
             }
         }
     }
 
     private void addItem(T item) {
         items.put(((Item) item).getBarcode(), item);
+    }
+
+    private void removeItem(int barcode) {
+        items.remove(barcode);
     }
 }
