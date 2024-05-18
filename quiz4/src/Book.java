@@ -8,6 +8,6 @@ public class Book extends Item {
 
     @Override
     public String toString() {
-        return "Author of the " + getName() + " is " + author + ". Its barcode is " + getBarcode() + " and its price is " + getPrice() + ".";
+        return "Author of the " + getName() + " is " + author + ". Its barcode is " + getBarcode() + " and its price is " + getPrice();
     }
 }

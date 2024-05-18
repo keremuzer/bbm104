@@ -47,6 +47,10 @@ public class Inventory<T> {
                 case "SEARCHBYNAME":
                     String searchName = parts[1];
                     searchByName(searchName, outputPath);
+                    break;
+                case "DISPLAY":
+                    displayItems(outputPath);
+                    break;
             }
         }
     }
@@ -76,5 +80,13 @@ public class Inventory<T> {
             }
         }
         FileIO.writeToFile(outputPath, "SEARCH RESULTS:\nItem is not found.\n------------------------------", true, true);
+    }
+
+    private void displayItems(String outputPath) {
+        FileIO.writeToFile(outputPath, "INVENTORY:", true, true);
+        for (T item : items.values()) {
+            FileIO.writeToFile(outputPath, item.toString(), true, true);
+        }
+        FileIO.writeToFile(outputPath, "------------------------------", true, true);
     }
 }

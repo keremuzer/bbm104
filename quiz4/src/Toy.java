@@ -8,6 +8,6 @@ public class Toy extends Item {
 
     @Override
     public String toString() {
-        return "Color of the " + getName() + " is " + color + ". Its barcode is " + getBarcode() + " and its price is " + getPrice() + ".";
+        return "Color of the " + getName() + " is " + color + ". Its barcode is " + getBarcode() + " and its price is " + getPrice();
     }
 }

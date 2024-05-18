@@ -8,6 +8,6 @@ public class Stationery extends Item {
 
     @Override
     public String toString() {
-        return "Kind of the " + getName() + " is " + kind + ". Its barcode is " + getBarcode() + " and its price is " + getPrice() + ".";
+        return "Kind of the " + getName() + " is " + kind + ". Its barcode is " + getBarcode() + " and its price is " + getPrice();
     }
 }
