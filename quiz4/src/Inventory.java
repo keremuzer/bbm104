@@ -38,9 +38,15 @@ public class Inventory<T> {
                     break;
                 case "REMOVE":
                     barcode = Integer.parseInt(parts[1]);
-                    inventory.removeItem(barcode);
-                    FileIO.writeToFile(outputPath, "REMOVE RESULTS:\nItem is removed.\n------------------------------", true, true);
+                    inventory.removeItem(barcode, outputPath);
                     break;
+                case "SEARCHBYBARCODE":
+                    barcode = Integer.parseInt(parts[1]);
+                    searchByBarcode(barcode, outputPath);
+                    break;
+                case "SEARCHBYNAME":
+                    String searchName = parts[1];
+                    searchByName(searchName, outputPath);
             }
         }
     }
@@ -49,7 +55,26 @@ public class Inventory<T> {
         items.put(((Item) item).getBarcode(), item);
     }
 
-    private void removeItem(int barcode) {
+    private void removeItem(int barcode, String outputPath) {
         items.remove(barcode);
+        FileIO.writeToFile(outputPath, "REMOVE RESULTS:\nItem is removed.\n------------------------------", true, true);
+    }
+
+    private void searchByBarcode(int barcode, String outputPath) {
+        if (items.containsKey(barcode)) {
+            FileIO.writeToFile(outputPath, "SEARCH RESULTS:\n" + items.get(barcode).toString() + "\n------------------------------", true, true);
+        } else {
+            FileIO.writeToFile(outputPath, "SEARCH RESULTS:\nItem is not found.\n------------------------------", true, true);
+        }
+    }
+
+    private void searchByName(String searchName, String outputPath) {
+        for (T item : items.values()) {
+            if (((Item) item).getName().equals(searchName)) {
+                FileIO.writeToFile(outputPath, "SEARCH RESULTS:\n" + item.toString() + "\n------------------------------", true, true);
+                return;
+            }
+        }
+        FileIO.writeToFile(outputPath, "SEARCH RESULTS:\nItem is not found.\n------------------------------", true, true);
     }
 }
