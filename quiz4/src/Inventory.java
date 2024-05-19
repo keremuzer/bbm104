@@ -90,11 +90,11 @@ public class Inventory<T> {
      */
     private void removeItem(int barcode, String outputPath) {
         if (!items.containsKey(barcode)) {
-            FileIO.writeToFile(outputPath, "REMOVE RESULTS:\nItem is not found.\n------------------------------", true, true);
+            FileIO.writeToFile(outputPath, "REMOVE RESULTS:\r\nItem is not found.\r\n------------------------------", true, true);
             return;
         }
         items.remove(barcode);
-        FileIO.writeToFile(outputPath, "REMOVE RESULTS:\nItem is removed.\n------------------------------", true, true);
+        FileIO.writeToFile(outputPath, "REMOVE RESULTS:\r\nItem is removed.\r\n------------------------------", true, true);
     }
 
     /**
@@ -105,9 +105,9 @@ public class Inventory<T> {
      */
     private void searchByBarcode(int barcode, String outputPath) {
         if (items.containsKey(barcode)) {
-            FileIO.writeToFile(outputPath, "SEARCH RESULTS:\n" + items.get(barcode).toString() + "\n------------------------------", true, true);
+            FileIO.writeToFile(outputPath, "SEARCH RESULTS:\r\n" + items.get(barcode).toString() + "\r\n------------------------------", true, true);
         } else {
-            FileIO.writeToFile(outputPath, "SEARCH RESULTS:\nItem is not found.\n------------------------------", true, true);
+            FileIO.writeToFile(outputPath, "SEARCH RESULTS:\r\nItem is not found.\r\n------------------------------", true, true);
         }
     }
 
@@ -120,11 +120,11 @@ public class Inventory<T> {
     private void searchByName(String searchName, String outputPath) {
         for (T item : items.values()) {
             if (((Item) item).getName().equals(searchName)) {
-                FileIO.writeToFile(outputPath, "SEARCH RESULTS:\n" + item + "\n------------------------------", true, true);
+                FileIO.writeToFile(outputPath, "SEARCH RESULTS:\r\n" + item + "\r\n------------------------------", true, true);
                 return;
             }
         }
-        FileIO.writeToFile(outputPath, "SEARCH RESULTS:\nItem is not found.\n------------------------------", true, true);
+        FileIO.writeToFile(outputPath, "SEARCH RESULTS:\r\nItem is not found.\r\n------------------------------", true, true);
     }
 
     /**

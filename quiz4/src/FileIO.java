@@ -43,7 +43,7 @@ public class FileIO {
         PrintStream ps = null;
         try {
             ps = new PrintStream(new FileOutputStream(path, append));
-            ps.print(content + (newLine ? "\n" : ""));
+            ps.print(content + (newLine ? "\r\n" : ""));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {
