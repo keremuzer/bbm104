@@ -164,6 +164,7 @@ public class Analysis {
         Route fastestBCMRoute = calculateFastestRoute(barelyConnectedMap);
         FileIO.writeToFile(outputPath, "Fastest Route from " + start + " to " + destination + " on Barely Connected Map (" + fastestBCMRoute.getDistance() + " KM)" + ":", true, true);
         printFastestRoute(barelyConnectedMap);
+        printAnalysis(roads, barelyConnectedMap);
     }
 
     public void printFastestRoute(ArrayList<Road> roads) {
@@ -197,5 +198,27 @@ public class Analysis {
         }
     }
 
+    public void printAnalysis(ArrayList<Road> originalRoads, ArrayList<Road> bcmRoads) {
+        // Calculate the total length of the original map
+        int originalMapLength = originalRoads.stream().mapToInt(Road::getLength).sum();
+        // Calculate the total length of the barely connected map
+        int bcmMapLength = bcmRoads.stream().mapToInt(Road::getLength).sum();
 
+        // Calculate the fastest route distance on the original map
+        Route originalFastestRoute = calculateFastestRoute(originalRoads);
+        int originalFastestRouteDistance = originalFastestRoute.getDistance();
+
+        // Calculate the fastest route distance on the barely connected map
+        Route bcmFastestRoute = calculateFastestRoute(bcmRoads);
+        int bcmFastestRouteDistance = bcmFastestRoute.getDistance();
+
+        // Calculate the ratios
+        double materialUsageRatio = (double) bcmMapLength / originalMapLength * 2;
+        double fastestRouteRatio = (double) bcmFastestRouteDistance / originalFastestRouteDistance;
+
+        // Print the analysis
+        FileIO.writeToFile(outputPath, "Analysis:", true, true);
+        FileIO.writeToFile(outputPath, "Ratio of Construction Material Usage Between Barely Connected and Original Map: " + String.format("%.2f", materialUsageRatio), true, true);
+        FileIO.writeToFile(outputPath, "Ratio of Fastest Route Between Barely Connected and Original Map: " + String.format("%.2f", fastestRouteRatio), true, true);
+    }
 }
