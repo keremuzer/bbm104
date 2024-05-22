@@ -26,4 +26,9 @@ public class Road {
     public int getId() {
         return id;
     }
+
+    @Override
+    public String toString() {
+        return point1 + " - " + point2 + "\t" + id;
+    }
 }
