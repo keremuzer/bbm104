@@ -36,27 +36,16 @@ public class Analysis {
      * and prints the results and analysis to the output file.
      */
     public void printOutput() {
-        // Clear the output file initially
-        FileIO.writeToFile(outputPath, "", false, false);
-        // Read the input file to get the list of roads
+        FileIO.writeToFile(outputPath, "", false, false); // Clear the output file
         ArrayList<Road> roads = readInput(inputPath);
-        // Calculate the fastest route for the original map
         Route route = calculateFastestRoute(roads);
-        // Write the fastest route to the output file
         FileIO.writeToFile(outputPath, "Fastest Route from " + start + " to " + destination + " (" + route.getDistance() + " KM):", true, true);
-        // Print the fastest route
         printFastestRoute(roads);
-        // Print the barely connected map
         printBarelyConnectedMap();
-        // Calculate the barely connected map
         ArrayList<Road> barelyConnectedMap = calculateBarelyConnectedMap();
-        // Calculate the fastest route for the barely connected map
         Route fastestBCMRoute = calculateFastestRoute(barelyConnectedMap);
-        // Write the fastest route for the barely connected map to the output file
         FileIO.writeToFile(outputPath, "Fastest Route from " + start + " to " + destination + " on Barely Connected Map (" + fastestBCMRoute.getDistance() + " KM):", true, true);
-        // Print the fastest route for the barely connected map
         printFastestRoute(barelyConnectedMap);
-        // Print the analysis of the original and barely connected maps
         printAnalysis(roads, barelyConnectedMap);
     }
 
