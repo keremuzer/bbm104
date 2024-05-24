@@ -1,5 +1,12 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 
+/**
+ * The Analysis class performs various operations on a map, including reading input,
+ * calculating the fastest route, generating a barely connected map, and printing results.
+ */
 public class Analysis {
     private String inputPath;
     private String outputPath;
@@ -9,29 +16,79 @@ public class Analysis {
     private String destination;
     private ArrayList<String> roadStrings = new ArrayList<>();
 
+    /**
+     * Constructor for the Analysis class.
+     *
+     * @param inputPath  the path to the input file
+     * @param outputPath the path to the output file
+     */
     public Analysis(String inputPath, String outputPath) {
         this.inputPath = inputPath;
         this.outputPath = outputPath;
-        routeList = new ArrayList<>();
-        routeMap = new LinkedHashMap<>();
-        start = "";
-        destination = "";
+        this.routeList = new ArrayList<>();
+        this.routeMap = new LinkedHashMap<>();
+        this.start = "";
+        this.destination = "";
     }
 
-    public Route calculateFastestRoute(ArrayList<Road> roads) {
+    /**
+     * Reads the input, calculates the fastest routes, generates the barely connected map,
+     * and prints the results and analysis to the output file.
+     */
+    public void printOutput() {
+        // Clear the output file initially
+        FileIO.writeToFile(outputPath, "", false, false);
+        // Read the input file to get the list of roads
+        ArrayList<Road> roads = readInput(inputPath);
+        // Calculate the fastest route for the original map
+        Route route = calculateFastestRoute(roads);
+        // Write the fastest route to the output file
+        FileIO.writeToFile(outputPath, "Fastest Route from " + start + " to " + destination + " (" + route.getDistance() + " KM):", true, true);
+        // Print the fastest route
+        printFastestRoute(roads);
+        // Print the barely connected map
+        printBarelyConnectedMap();
+        // Calculate the barely connected map
+        ArrayList<Road> barelyConnectedMap = calculateBarelyConnectedMap();
+        // Calculate the fastest route for the barely connected map
+        Route fastestBCMRoute = calculateFastestRoute(barelyConnectedMap);
+        // Write the fastest route for the barely connected map to the output file
+        FileIO.writeToFile(outputPath, "Fastest Route from " + start + " to " + destination + " on Barely Connected Map (" + fastestBCMRoute.getDistance() + " KM):", true, true);
+        // Print the fastest route for the barely connected map
+        printFastestRoute(barelyConnectedMap);
+        // Print the analysis of the original and barely connected maps
+        printAnalysis(roads, barelyConnectedMap);
+    }
+
+    /**
+     * Calculates the fastest route between the start and destination points.
+     *
+     * @param roads the list of roads in the map
+     * @return the fastest Route object
+     */
+    private Route calculateFastestRoute(ArrayList<Road> roads) {
         routeMap.clear();
         routeList.clear();
         routeList.add(new Route(0, null, start, new ArrayList<>()));
 
         HashSet<String> visited = new HashSet<>();
 
+        // Sort the roads connected to each city based on their length and ID
+        roads.sort((road1, road2) -> {
+            if (road1.getLength() != road2.getLength()) {
+                return Integer.compare(road1.getLength(), road2.getLength());
+            } else {
+                return Integer.compare(road1.getId(), road2.getId());
+            }
+        });
+
         while (!routeList.isEmpty()) {
-            // Sort the routeList to get the route with the smallest distance
-            routeList.sort((route1, route2) -> {
+            // Sort the routeList based on the distance and the order they were added
+            Collections.sort(routeList, (route1, route2) -> {
                 if (route1.getDistance() != route2.getDistance()) {
                     return Integer.compare(route1.getDistance(), route2.getDistance());
                 } else {
-                    return Integer.compare(route1.getRoad().getId(), route2.getRoad().getId());
+                    return Integer.compare(routeList.indexOf(route1), routeList.indexOf(route2));
                 }
             });
 
@@ -51,10 +108,12 @@ public class Analysis {
 
             // Add new routes to the routeList
             for (Road road : roads) {
+                // If the road's starting point is the current point and the destination is not visited
                 if (road.getPoint1().equals(currentPoint) && !visited.contains(road.getPoint2())) {
                     int newDistance = currentRoute.getDistance() + road.getLength();
                     Route newRoute = new Route(newDistance, road, road.getPoint2(), currentRoute.getRoadsTaken());
                     routeList.add(newRoute);
+                    // If the road's ending point is the current point and the starting point is not visited
                 } else if (road.getPoint2().equals(currentPoint) && !visited.contains(road.getPoint1())) {
                     int newDistance = currentRoute.getDistance() + road.getLength();
                     Route newRoute = new Route(newDistance, road, road.getPoint1(), currentRoute.getRoadsTaken());
@@ -62,10 +121,15 @@ public class Analysis {
                 }
             }
         }
-        return null; // If no route is found
+        return null; // return null if no route is found
     }
 
-    public ArrayList<Road> calculateBarelyConnectedMap() {
+    /**
+     * Calculates the Barely Connected Map from the original map.
+     *
+     * @return the list of roads in the barely connected map
+     */
+    private ArrayList<Road> calculateBarelyConnectedMap() {
         ArrayList<Road> roads = readInput(inputPath);
         ArrayList<Road> barelyConnectedMap = new ArrayList<>();
 
@@ -97,7 +161,7 @@ public class Analysis {
         appendedPoints.add(startPoint);
 
         while (!roadList.isEmpty()) {
-            // Sort the list in increasing order according to their length (use their IDs for determining which one is smaller if the lengths are equal)
+            // Sort the list according to their length use their IDs as a tiebreaker if they have the same length
             roadList.sort((road1, road2) -> {
                 if (road1.getLength() != road2.getLength()) {
                     return Integer.compare(road1.getLength(), road2.getLength());
@@ -137,7 +201,13 @@ public class Analysis {
         return barelyConnectedMap;
     }
 
-    public ArrayList<Road> readInput(String inputPath) {
+    /**
+     * Reads the input file and creates a list of Road objects.
+     *
+     * @param inputPath the path to the input file
+     * @return the list of roads read from the input file
+     */
+    private ArrayList<Road> readInput(String inputPath) {
         ArrayList<Road> roads = new ArrayList<>();
         String[] lines = FileIO.readFile(inputPath, true, true);
         start = lines[0].split("\t")[0];
@@ -153,27 +223,21 @@ public class Analysis {
         return roads;
     }
 
-    public void printOutput() {
-        FileIO.writeToFile("src/output.txt", "", false, false);
-        ArrayList<Road> roads = readInput(inputPath);
-        Route route = calculateFastestRoute(roads);
-        FileIO.writeToFile(outputPath, "Fastest Route from " + start + " to " + destination + " (" + route.getDistance() + " KM)" + ":", true, true);
-        printFastestRoute(roads);
-        printBarelyConnectedMap();
-        ArrayList<Road> barelyConnectedMap = calculateBarelyConnectedMap();
-        Route fastestBCMRoute = calculateFastestRoute(barelyConnectedMap);
-        FileIO.writeToFile(outputPath, "Fastest Route from " + start + " to " + destination + " on Barely Connected Map (" + fastestBCMRoute.getDistance() + " KM)" + ":", true, true);
-        printFastestRoute(barelyConnectedMap);
-        printAnalysis(roads, barelyConnectedMap);
-    }
-
-    public void printFastestRoute(ArrayList<Road> roads) {
+    /**
+     * Prints the fastest route to the output file.
+     *
+     * @param roads the list of roads in the map
+     */
+    private void printFastestRoute(ArrayList<Road> roads) {
         Route route = calculateFastestRoute(roads);
         ArrayList<Road> roadsTaken = route.getRoadsTaken();
         printRoad(roadsTaken);
     }
 
-    public void printBarelyConnectedMap() {
+    /**
+     * Prints the Barely Connected Map to the output file.
+     */
+    private void printBarelyConnectedMap() {
         ArrayList<Road> barelyConnectedMap = calculateBarelyConnectedMap();
         // Sort the roads in barelyConnectedMap according to their length, and if they are equal in length, use their IDs as a tiebreaker
         barelyConnectedMap.sort((road1, road2) -> {
@@ -187,6 +251,11 @@ public class Analysis {
         printRoad(barelyConnectedMap);
     }
 
+    /**
+     * Prints the given list of roads to the output file.
+     *
+     * @param roads the list of roads to be printed
+     */
     private void printRoad(ArrayList<Road> roads) {
         for (Road road : roads) {
             String roadStr = road.getPoint1() + "\t" + road.getPoint2() + "\t" + road.getLength() + "\t" + road.getId();
@@ -198,7 +267,13 @@ public class Analysis {
         }
     }
 
-    public void printAnalysis(ArrayList<Road> originalRoads, ArrayList<Road> bcmRoads) {
+    /**
+     * Prints an analysis comparing the original map and the Barely Connected Map.
+     *
+     * @param originalRoads the list of roads in the original map
+     * @param bcmRoads      the list of roads in the barely connected map
+     */
+    private void printAnalysis(ArrayList<Road> originalRoads, ArrayList<Road> bcmRoads) {
         // Calculate the total length of the original map
         int originalMapLength = originalRoads.stream().mapToInt(Road::getLength).sum();
         // Calculate the total length of the barely connected map
@@ -219,6 +294,6 @@ public class Analysis {
         // Print the analysis
         FileIO.writeToFile(outputPath, "Analysis:", true, true);
         FileIO.writeToFile(outputPath, "Ratio of Construction Material Usage Between Barely Connected and Original Map: " + String.format("%.2f", materialUsageRatio), true, true);
-        FileIO.writeToFile(outputPath, "Ratio of Fastest Route Between Barely Connected and Original Map: " + String.format("%.2f", fastestRouteRatio), true, true);
+        FileIO.writeToFile(outputPath, "Ratio of Fastest Route Between Barely Connected and Original Map: " + String.format("%.2f", fastestRouteRatio), true, false);
     }
 }
